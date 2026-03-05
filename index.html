@@ -1,391 +1,982 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 6.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Studio - 设计作品集</title>
+    
+    <!-- Google Fonts 引入 -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 图标库 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ========== 全局样式重置和变量定义 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<link rel="stylesheet" href="/css/main.css">
+        /* CSS 变量定义（赛博朋克配色方案） */
+        :root {
+            --primary-dark: #0a0e27;
+            --secondary-dark: #1a1f3a;
+            --accent-pink: #ff006e;
+            --accent-cyan: #00f5ff;
+            --accent-purple: #b537f2;
+            --accent-green: #00ff88;
+            --neon-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+            --text-light: #e0e0e0;
+            --text-muted: #a0a0a0;
+        }
 
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+        /* 背景网格效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+            animation: grid-move 20s linear infinite;
+        }
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
+        /* 网格移动动画 */
+        @keyframes grid-move {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(50px);
+            }
+        }
 
-  <meta name="description" content="同济大学设计创意学院硕士研究生">
-<meta property="og:type" content="website">
-<meta property="og:title" content="萌萌的blog">
-<meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="萌萌的blog">
-<meta property="og:description" content="同济大学设计创意学院硕士研究生">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:author" content="1um0">
-<meta name="twitter:card" content="summary">
+        /* ========== 页面容器 ========== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
 
-<link rel="canonical" href="http://example.com/">
+        /* ========== 头部（Header）样式 ========== */
+        header {
+            background-color: rgba(10, 14, 39, 0.95);
+            border-bottom: 2px solid var(--accent-cyan);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+        }
 
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : true,
-    isPost : false,
-    lang   : 'zh-CN'
-  };
-</script>
+        /* Logo 样式 - 添加故障效果 */
+        .logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+            cursor: pointer;
+            position: relative;
+            animation: glitch-animation 3s infinite;
+        }
 
-  <title>萌萌的blog</title>
-  
+        /* 故障动画效果 */
+        @keyframes glitch-animation {
+            0%, 100% {
+                text-shadow: 
+                    -2px 0 var(--accent-cyan),
+                    2px 0 var(--accent-pink),
+                    0 0 10px rgba(255, 0, 110, 0.3);
+            }
+            20% {
+                text-shadow: 
+                    -2px 0 var(--accent-pink),
+                    2px 0 var(--accent-cyan),
+                    0 0 10px rgba(0, 245, 255, 0.3);
+            }
+            40% {
+                text-shadow: 
+                    2px 0 var(--accent-cyan),
+                    -2px 0 var(--accent-purple),
+                    0 0 10px rgba(181, 55, 242, 0.3);
+            }
+        }
 
+        /* 导航菜单 */
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
 
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
 
+        /* 导航链接悬停效果 */
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink));
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
 
+        nav a:hover {
+            color: var(--accent-cyan);
+        }
 
+        nav a:hover::after {
+            width: 100%;
+        }
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+        /* 汉堡菜单按钮（移动设备） */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: var(--accent-cyan);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+        /* ========== 英雄区域（Hero）样式 ========== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px;
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.05), rgba(255, 0, 110, 0.05));
+            border-bottom: 2px solid rgba(0, 245, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
 
+        /* 英雄区域背景装饰 */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.1), transparent);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 0, 110, 0.1), transparent);
+            border-radius: 50%;
+            animation: float-reverse 8s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        @keyframes float-reverse {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink), var(--accent-purple), var(--accent-cyan));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+            100% { background-position: 0% center; }
+        }
+
+        .hero-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero-tagline {
+            font-size: 1.2rem;
+            color: var(--accent-pink);
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        /* 发光按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid var(--accent-cyan);
+            background-color: transparent;
+            color: var(--accent-cyan);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink));
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            color: var(--primary-dark);
+            box-shadow: 0 0 30px var(--accent-cyan), 0 0 60px rgba(0, 245, 255, 0.4);
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        /* ========== 作品集区域（Portfolio）样式 ========== */
+        .portfolio {
+            padding: 100px 0;
+            background-color: var(--secondary-dark);
+            border-top: 2px solid rgba(0, 245, 255, 0.3);
+            border-bottom: 2px solid rgba(255, 0, 110, 0.3);
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+            color: var(--accent-cyan);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink));
+            box-shadow: 0 0 15px var(--accent-cyan);
+        }
+
+        /* 作品卡片网格 */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .portfolio-card {
+            background-color: rgba(26, 31, 58, 0.8);
+            border: 2px solid rgba(0, 245, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .portfolio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(255, 0, 110, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .portfolio-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.5), inset 0 0 20px rgba(0, 245, 255, 0.1);
+            transform: translateY(-10px);
+        }
+
+        .portfolio-card:hover::before {
+            opacity: 1;
+        }
+
+        /* 作品卡片图片占位符 */
+        .portfolio-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(181, 55, 242, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--accent-cyan);
+            border-bottom: 2px solid rgba(0, 245, 255, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .portfolio-card:hover .portfolio-image {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(181, 55, 242, 0.2));
+            color: var(--accent-pink);
+        }
+
+        .portfolio-content {
+            padding: 25px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .portfolio-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent-pink);
+        }
+
+        .portfolio-description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .portfolio-tag {
+            display: inline-block;
+            background-color: rgba(0, 245, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+        }
+
+        /* ========== 日记区域（Journal）样式 ========== */
+        .journal {
+            padding: 100px 0;
+            background-color: var(--primary-dark);
+        }
+
+        .journal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .journal-card {
+            background-color: rgba(26, 31, 58, 0.8);
+            border-left: 4px solid var(--accent-green);
+            padding: 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .journal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(181, 55, 242, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .journal-card:hover {
+            border-left-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            transform: translateX(10px);
+        }
+
+        .journal-card:hover::before {
+            opacity: 1;
+        }
+
+        /* 故障文字效果 */
+        .journal-card:hover .journal-title {
+            animation: glitch-text 0.3s infinite;
+        }
+
+        @keyframes glitch-text {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        .journal-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-pink);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .journal-date {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .journal-excerpt {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 15px;
+        }
+
+        .journal-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 500;
+            font-family: 'Rajdhani', sans-serif;
+            transition: color 0.3s ease;
+        }
+
+        .journal-link:hover {
+            color: var(--accent-pink);
+            text-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* ========== 页脚（Footer）样式 ========== */
+        footer {
+            background-color: rgba(10, 14, 39, 0.95);
+            border-top: 2px solid var(--accent-pink);
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.2);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .social-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink));
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .social-icon:hover {
+            color: var(--primary-dark);
+            box-shadow: 0 0 20px var(--accent-cyan);
+        }
+
+        .social-icon:hover::before {
+            opacity: 1;
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* ========== 响应式设计 ========== */
+        @media (max-width: 768px) {
+            /* 手机上显示汉堡菜单 */
+            .hamburger {
+                display: flex;
+            }
+
+            nav {
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--secondary-dark);
+                flex-direction: column;
+                gap: 0;
+                padding: 20px 0;
+                border-bottom: 2px solid var(--accent-cyan);
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+
+            nav.active {
+                max-height: 300px;
+            }
+
+            nav a {
+                padding: 15px 20px;
+                text-align: center;
+                border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+            }
+
+            /* 汉堡菜单动画 */
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(10px, 10px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -7px);
+            }
+
+            /* 英雄区域字体调整 */
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .hero-tagline {
+                font-size: 1rem;
+            }
+
+            /* 作品卡片网格调整 */
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            /* 页脚社交图标间距 */
+            .social-links {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .social-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .journal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav a::after {
+                display: none;
+            }
+        }
+
+        /* ========== 光点装饰动画 ========== */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 5px var(--accent-cyan);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--accent-cyan);
+            }
+        }
+
+        /* 平滑滚动行为 */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
+<body>
+    <!-- ========== 头部导航 ========== -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <a href="#home" class="logo">
+                    // DESIGN STUDIO
+                </a>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+                <!-- 汉堡菜单按钮 -->
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">萌萌的blog</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-resources">
-
-    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
-
-  </li>
-  </ul>
-</nav>
-
-
-
-
-</div>
+                <!-- 导航菜单 -->
+                <nav id="nav-menu">
+                    <a href="#home">首页</a>
+                    <a href="#portfolio">作品</a>
+                    <a href="#journal">日记</a>
+                    <a href="#contact">联系</a>
+                </nav>
+            </div>
+        </div>
     </header>
 
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content index posts-expand">
-            
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/22/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="1um0">
-      <meta itemprop="description" content="同济大学设计创意学院硕士研究生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="萌萌的blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/09/22/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-09-22 14:54:41" itemprop="dateCreated datePublished" datetime="2025-09-22T14:54:41+08:00">2025-09-22</time>
-            </span>
-
-          
-
+    <!-- ========== 英雄区域 ========== -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">DESIGN STUDIO</h1>
+            <p class="hero-subtitle">设计学学生 | 创意编码爱好者</p>
+            <p class="hero-tagline">「 未来已来，设计由我 」</p>
+            <div>
+                <a href="#portfolio" class="btn">查看作品</a>
+                <a href="#journal" class="btn" style="margin-left: 20px; border-color: var(--accent-pink); color: var(--accent-pink);">我的日记</a>
+            </div>
         </div>
-      </header>
+    </section>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+    <!-- ========== 作品集区域 ========== -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <h2 class="section-title">我的作品</h2>
 
-      
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+            <div class="portfolio-grid">
+                <!-- 作品卡片 1 -->
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">品牌视觉设计</h3>
+                        <p class="portfolio-description">为创意企业设计的完整品牌视觉系统，包括Logo、色彩方案和VI规范。</p>
+                        <span class="portfolio-tag">品牌设计</span>
+                        <span class="portfolio-tag">视觉设计</span>
+                    </div>
+                </div>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+                <!-- 作品卡片 2 -->
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">插画创意展</h3>
+                        <p class="portfolio-description">一系列融合传统与现代元素的数字插画作品，表现科技与艺术的结合。</p>
+                        <span class="portfolio-tag">插画</span>
+                        <span class="portfolio-tag">数字设计</span>
+                    </div>
+                </div>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+                <!-- 作品卡片 3 -->
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <i class="fas fa-layout"></i>
+                    </div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">网页界面设计</h3>
+                        <p class="portfolio-description">现代极简风格的Web界面设计，强调用户体验和视觉层次。</p>
+                        <span class="portfolio-tag">UI设计</span>
+                        <span class="portfolio-tag">网页设计</span>
+                    </div>
+                </div>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+                <!-- 作品卡片 4 -->
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">动画短片</h3>
+                        <p class="portfolio-description">融合故障美学的短片作品，展现赛博朋克风格的视觉表达和动画技巧。</p>
+                        <span class="portfolio-tag">动画</span>
+                        <span class="portfolio-tag">视效</span>
+                    </div>
+                </div>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <!-- 作品卡片 5 -->
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">书籍版式设计</h3>
+                        <p class="portfolio-description">实验性书籍设计作品，通过创意排版和装帧展现设计理念。</p>
+                        <span class="portfolio-tag">排版</span>
+                        <span class="portfolio-tag">出版设计</span>
+                    </div>
+                </div>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
+                <!-- 作品卡片 6 -->
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">应用App设计</h3>
+                        <p class="portfolio-description">功能完整的移动应用界面设计，兼具美学和易用性。</p>
+                        <span class="portfolio-tag">App设计</span>
+                        <span class="portfolio-tag">UX/UI</span>
+                    </div>
+                </div>
+            </div>
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    </section>
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+    <!-- ========== 日记区域 ========== -->
+    <section id="journal" class="journal">
+        <div class="container">
+            <h2 class="section-title">设计日记</h2>
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
+            <div class="journal-grid">
+                <!-- 日记条目 1 -->
+                <div class="journal-card">
+                    <h3 class="journal-title">赛博朋克设计探索</h3>
+                    <p class="journal-date">2026年3月4日</p>
+                    <p class="journal-excerpt">今天研究了赛博朋克美学在现代设计中的应用。霓虹色、网格线、故障效果的组合能创造出独特的视觉张力。这种风格不仅仅是视觉表现，更代表了对未来的想象...</p>
+                    <a href="#detail1" class="journal-link">阅读全文 →</a>
+                </div>
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-      </div>
-      <!--/noindex-->
+                <!-- 日记条目 2 -->
+                <div class="journal-card">
+                    <h3 class="journal-title">色彩心理学笔记</h3>
+                    <p class="journal-date">2026年3月2日</p>
+                    <p class="journal-excerpt">学习了色彩心理学在品牌设计中的应用。不同色彩能够唤起用户的不同情感和联想。在我的设计中，选择合适的配色方案至关重要...</p>
+                    <a href="#detail2" class="journal-link">阅读全文 →</a>
+                </div>
 
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">1um0</p>
-  <div class="site-description" itemprop="description">同济大学设计创意学院硕士研究生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">1</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-  </nav>
-</div>
+                <!-- 日记条目 3 -->
+                <div class="journal-card">
+                    <h3 class="journal-title">排版的艺术</h3>
+                    <p class="journal-date">2026年2月28日</p>
+                    <p class="journal-excerpt">好的排版能够将内容转化为视觉体验。今天完成了一个书籍排版项目，通过网格系统和合理的字体搭配，使整个版面更具节奏感和可读性...</p>
+                    <a href="#detail3" class="journal-link">阅读全文 →</a>
+                </div>
 
+                <!-- 日记条目 4 -->
+                <div class="journal-card">
+                    <h3 class="journal-title">用户界面设计原则</h3>
+                    <p class="journal-date">2026年2月25日</p>
+                    <p class="journal-excerpt">在设计App界面时，我意识到美学和功能性需要达到完美平衡。用户界面不仅要好看，还要让用户能够直观地完成任务...</p>
+                    <a href="#detail4" class="journal-link">阅读全文 →</a>
+                </div>
 
+                <!-- 日记条目 5 -->
+                <div class="journal-card">
+                    <h3 class="journal-title">设计灵感的来源</h3>
+                    <p class="journal-date">2026年2月22日</p>
+                    <p class="journal-excerpt">最近发现设计灵感可以来自日常生活的每个角落。一场下雨、一束光线、一段音乐都可以启发我的创意思维。保持对生活的敏感...</p>
+                    <a href="#detail5" class="journal-link">阅读全文 →</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2025-09 – 
-  <span itemprop="copyrightYear">2025</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">1um0</span>
-</div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
-  </div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
+    <!-- ========== 页脚 ========== -->
+    <footer id="contact">
+        <div class="container">
+            <div class="social-links">
+                <a href="https://github.com" target="_blank" class="social-icon" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://weibo.com" target="_blank" class="social-icon" title="微博">
+                    <i class="fab fa-weibo"></i>
+                </a>
+                <a href="https://xiaohongshu.com" target="_blank" class="social-icon" title="小红书">
+                    <i class="fas fa-heart"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" class="social-icon" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="mailto:your-email@example.com" class="social-icon" title="邮件">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+            <p class="copyright">© 2026 Design Studio. All rights reserved. | Designed with 💫 and code</p>
+        </div>
     </footer>
-  </div>
 
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
+    <!-- ========== JavaScript 交互脚本 ========== -->
+    <script>
+        // 汉堡菜单交互
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
 
-<script src="/js/utils.js"></script>
+        hamburger.addEventListener('click', function() {
+            // 切换汉堡菜单的激活状态
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
 
-<script src="/js/motion.js"></script>
+        // 点击导航链接时关闭菜单
+        const navLinks = navMenu.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
 
+        // 平滑滚动增强（点击Logo返回顶部）
+        const logo = document.querySelector('.logo');
+        logo.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
 
-<script src="/js/schemes/pisces.js"></script>
+        // 为日记卡片添加交互效果
+        const journalCards = document.querySelectorAll('.journal-card');
+        journalCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                // 鼠标进入时添加动画
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 10);
+            });
+        });
 
+        // 添加滚动时的背景网格移动效果
+        window.addEventListener('scroll', function() {
+            const scrollY = window.scrollY;
+            // 可选：根据滚动位置调整背景网格
+            // document.body.style.backgroundPosition = `0 ${scrollY * 0.5}px`;
+        });
 
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
+        // 为作品卡片添加鼠标跟踪效果（高级交互）
+        const portfolioCards = document.querySelectorAll('.portfolio-card');
+        portfolioCards.forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 根据鼠标位置添加光线效果（可选）
+                const light = `radial-gradient(circle at ${x}px ${y}px, rgba(0, 245, 255, 0.2), transparent)`;
+                // this.style.backgroundImage = light;
+            });
+        });
+    </script>
 </body>
 </html>
