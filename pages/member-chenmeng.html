@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>陈孟 - WGCR Club</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <nav>
+      <a href="/" class="logo">WGCR CLUB</a>
+      <ul>
+        <li><a href="/#members">成员</a></li>
+        <li><a href="/#content">内容</a></li>
+        <li><a href="/#about">关于</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <button class="btn-auth" onclick="showLoginModal()">登录</button>
+        <button class="btn-auth" onclick="showRegisterModal()" style="border-color: var(--neon-purple); color: var(--neon-purple);">注册</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Member Profile Header -->
+    <section style="margin-bottom: 3rem; padding: 2rem; background: rgba(26, 31, 58, 0.8); border: 2px solid var(--neon-blue); border-radius: 4px;">
+      <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+        <div style="flex-shrink: 0;">
+          <div style="width: 150px; height: 150px; background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 5rem;">🎯</div>
+        </div>
+        <div style="flex: 1;">
+          <h1 style="font-size: 2.5rem; color: var(--neon-cyan); margin-bottom: 0.5rem; letter-spacing: 1px;">陈孟</h1>
+          <p style="font-size: 1.3rem; color: var(--neon-pink); margin-bottom: 1rem;">Chen Meng | 项目策划</p>
+          <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem;">
+            擅长战略规划和项目管理，是项目的大脑。陈孟以其前瞻性的视野和严谨的规划能力著称，能够洞察趋势，制定长期战略，确保项目的顺利进行。
+          </p>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <span style="background: var(--neon-blue); color: var(--primary-bg); padding: 0.5rem 1rem; border-radius: 2px; font-size: 0.9rem;">策略规划</span>
+            <span style="background: var(--neon-purple); color: var(--primary-bg); padding: 0.5rem 1rem; border-radius: 2px; font-size: 0.9rem;">数据分析</span>
+            <span style="background: var(--accent-green); color: var(--primary-bg); padding: 0.5rem 1rem; border-radius: 2px; font-size: 0.9rem;">团队管理</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Members Grid (Other Members) -->
+    <section style="margin-bottom: 3rem;">
+      <h2 class="section-title">其他成员</h2>
+      <div class="members-grid">
+        <div class="member-card" data-member="fancheng">
+          <div class="member-avatar">💻</div>
+          <div class="member-name">范诚昊</div>
+          <div class="member-role">技术开发</div>
+          <div class="member-description">技术大牛，掌握多种编程语言和框架</div>
+          <button class="btn-primary" onclick="navigateToMember('fancheng')">查看详情</button>
+        </div>
+
+        <div class="member-card" data-member="hanhuizhu">
+          <div class="member-avatar">🎨</div>
+          <div class="member-name">韩蕙竹</div>
+          <div class="member-role">设计创意</div>
+          <div class="member-description">设计师，创意无限，视觉表达能力超群</div>
+          <button class="btn-primary" onclick="navigateToMember('hanhuizhu')">查看详情</button>
+        </div>
+
+        <div class="member-card" data-member="tangshuyun">
+          <div class="member-avatar">✍️</div>
+          <div class="member-name">唐淑毓</div>
+          <div class="member-role">文案策划</div>
+          <div class="member-description">文案高手，用文字点亮思想</div>
+          <button class="btn-primary" onclick="navigateToMember('tangshuyun')">查看详情</button>
+        </div>
+
+        <div class="member-card" data-member="liyimeng">
+          <div class="member-avatar">📊</div>
+          <div class="member-name">李祎萌</div>
+          <div class="member-role">运营推广</div>
+          <div class="member-description">运营达人，增长黑客，数据驱动决策</div>
+          <button class="btn-primary" onclick="navigateToMember('liyimeng')">查看详情</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <section style="margin-bottom: 2rem;">
+      <h2 class="section-title">陈孟的作品与分享</h2>
+      <div class="content-area">
+        <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+          这里会展示陈孟的相关内容。内容由管理员在后台发布。
+        </p>
+      </div>
+    </section>
+
+    <!-- Back Button -->
+    <div style="margin-top: 3rem; text-align: center;">
+      <button class="btn-primary" onclick="window.location.href='/'">返回主页</button>
+    </div>
+  </main>
+
+  <!-- Modals -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideModal('loginModal')">&times;</button>
+      <h2 style="color: var(--neon-cyan); margin-bottom: 1.5rem;">登录</h2>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">邮箱</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">密码</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="btn-secondary" onclick="hideModal('loginModal')">取消</button>
+          <button type="submit" class="btn-primary">登录</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideModal('registerModal')">&times;</button>
+      <h2 style="color: var(--neon-purple); margin-bottom: 1.5rem;">注册</h2>
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="registerEmail">邮箱</label>
+          <input type="email" id="registerEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="registerUsername">用户名</label>
+          <input type="text" id="registerUsername" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">密码</label>
+          <input type="password" id="registerPassword" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPasswordConfirm">确认密码</label>
+          <input type="password" id="registerPasswordConfirm" required>
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="btn-secondary" onclick="hideModal('registerModal')">取消</button>
+          <button type="submit" class="btn-primary">注册</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/auth.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

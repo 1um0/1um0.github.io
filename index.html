@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WGCR Club - 五个丑人记录网站</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ==================== HEADER & NAVIGATION ==================== -->
+  <header>
+    <nav>
+      <a href="/" class="logo">WGCR CLUB</a>
+      <ul>
+        <li><a href="#members">成员</a></li>
+        <li><a href="#content">内容</a></li>
+        <li><a href="#about">关于</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <button class="btn-auth" onclick="showLoginModal()">登录</button>
+        <button class="btn-auth" onclick="showRegisterModal()" style="border-color: var(--neon-purple); color: var(--neon-purple);">注册</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="container">
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div class="logo-main">WGCR</div>
+      <div class="hero-subtitle">Welcome to the WGCR Club</div>
+      <div class="hero-description">
+        这是一个记录特殊友谊的网站。<br>
+        五个志同道合的人，在这里分享故事、见证成长。<br>
+        欢迎加入我们的世界。
+      </div>
+    </section>
+
+    <!-- MEMBERS SECTION -->
+    <section class="section" id="members">
+      <h2 class="section-title">成员介绍</h2>
+      <div class="members-grid">
+        <div class="member-card" data-member="chenmeng">
+          <div class="member-avatar">🎯</div>
+          <div class="member-name">陈孟</div>
+          <div class="member-role">项目策划</div>
+          <div class="member-description">擅长战略规划和项目管理，是项目的大脑</div>
+          <button class="btn-primary" onclick="navigateToMember('chenmeng')">查看详情</button>
+        </div>
+
+        <div class="member-card" data-member="fancheng">
+          <div class="member-avatar">💻</div>
+          <div class="member-name">范诚昊</div>
+          <div class="member-role">技术开发</div>
+          <div class="member-description">技术大牛，掌握多种编程语言和框架</div>
+          <button class="btn-primary" onclick="navigateToMember('fancheng')">查看详情</button>
+        </div>
+
+        <div class="member-card" data-member="hanhuizhu">
+          <div class="member-avatar">🎨</div>
+          <div class="member-name">韩蕙竹</div>
+          <div class="member-role">设计创意</div>
+          <div class="member-description">设计师，创意无限，视觉表达能力超群</div>
+          <button class="btn-primary" onclick="navigateToMember('hanhuizhu')">查看详情</button>
+        </div>
+
+        <div class="member-card" data-member="tangshuyun">
+          <div class="member-avatar">✍️</div>
+          <div class="member-name">唐淑毓</div>
+          <div class="member-role">文案策划</div>
+          <div class="member-description">文案高手，用文字点亮思想</div>
+          <button class="btn-primary" onclick="navigateToMember('tangshuyun')">查看详情</button>
+        </div>
+
+        <div class="member-card" data-member="liyimeng">
+          <div class="member-avatar">📊</div>
+          <div class="member-name">李祎萌</div>
+          <div class="member-role">运营推广</div>
+          <div class="member-description">运营达人，增长黑客，数据驱动决策</div>
+          <button class="btn-primary" onclick="navigateToMember('liyimeng')">查看详情</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENT SECTION -->
+    <section class="section" id="content">
+      <h2 class="section-title">内容展示</h2>
+      
+      <div class="content-area">
+        <div class="content-header">
+          <div>过滤查看</div>
+          <div class="content-filters">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="公告">公告</button>
+            <button class="filter-btn" data-filter="项目">项目</button>
+            <button class="filter-btn" data-filter="分享">分享</button>
+            <button class="filter-btn" data-filter="动态">动态</button>
+          </div>
+        </div>
+
+        <!-- Admin Panel (Only visible to admins) -->
+        <div class="admin-panel" style="display: none;">
+          <div class="admin-title">管理员工具</div>
+          
+          <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="content">发布内容</button>
+            <button class="admin-tab" data-tab="users">用户管理</button>
+          </div>
+
+          <!-- Content Tab -->
+          <div class="admin-tab-content active" id="contentTab">
+            <form id="uploadForm" class="form-group">
+              <div class="form-group">
+                <label for="contentTitle">标题</label>
+                <input type="text" id="contentTitle" required>
+              </div>
+              <div class="form-group">
+                <label for="contentDescription">描述</label>
+                <textarea id="contentDescription" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="contentType">内容类型</label>
+                <select id="contentType" required>
+                  <option value="公告">公告</option>
+                  <option value="项目">项目</option>
+                  <option value="分享">分享</option>
+                  <option value="动态">动态</option>
+                </select>
+              </div>
+
+              <!-- 存储配置提示 -->
+              <div style="background: rgba(217, 70, 255, 0.1); border-left: 3px solid var(--neon-pink); padding: 1rem; margin-bottom: 1rem; border-radius: 2px;">
+                <p style="color: var(--neon-pink); margin-bottom: 0.5rem;">📸 图片上传</p>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">目前使用本地存储。如需配置云存储（推荐阿里云OSS或腾讯云COS），请参考文档中的存储配置部分。</p>
+              </div>
+
+              <div class="form-buttons">
+                <button type="button" class="btn-secondary" onclick="document.getElementById('uploadForm').style.display = 'none'">取消</button>
+                <button type="submit" class="btn-primary">发布</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Users Tab -->
+          <div class="admin-tab-content" id="usersTab">
+            <div class="admin-list" id="adminUsersList"></div>
+          </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="section" id="about">
+      <h2 class="section-title">关于我们</h2>
+      <div style="background: rgba(26, 31, 58, 0.6); border: 2px solid var(--neon-cyan); border-radius: 4px; padding: 2rem; color: var(--text-secondary); line-height: 1.8;">
+        <p style="margin-bottom: 1rem;">
+          <span style="color: var(--neon-cyan);">WGCR Club</span> 是一个由五个志同道合的伙伴组成的社群，代表着各自独特的天赋和热情。
+        </p>
+        <p style="margin-bottom: 1rem;">
+          我们来自不同的背景，有着不同的专长，但共同的目标是创造价值、分享知识、见证彼此的成长。这个网站记录了我们的故事，展示了我们的作品，也承载了我们的友谊。
+        </p>
+        <p style="margin-bottom: 1rem;">
+          无论您是想要了解我们的故事，还是想与我们互动和交流，这里都是最好的地方。我们热忱欢迎每一位访客，一起在创意和创新的世界中遨游。
+        </p>
+        <p style="color: var(--neon-pink); font-weight: bold;">
+          "Five Unusual Talents, United by Passion" | "五个特殊的才华，由热情敢聚"
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+  
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideModal('loginModal')">&times;</button>
+      <h2 style="color: var(--neon-cyan); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">登录</h2>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">邮箱</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">密码</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+          <p>演示账号：admin@wgcr.club / admin123</p>
+          <p>示例账号：chenmeng@wgcr.club / 123456</p>
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="btn-secondary" onclick="hideModal('loginModal')">取消</button>
+          <button type="submit" class="btn-primary">登录</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideModal('registerModal')">&times;</button>
+      <h2 style="color: var(--neon-purple); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">注册</h2>
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="registerEmail">邮箱</label>
+          <input type="email" id="registerEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="registerUsername">用户名</label>
+          <input type="text" id="registerUsername" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">密码</label>
+          <input type="password" id="registerPassword" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPasswordConfirm">确认密码</label>
+          <input type="password" id="registerPasswordConfirm" required>
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="btn-secondary" onclick="hideModal('registerModal')">取消</button>
+          <button type="submit" class="btn-primary">注册</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

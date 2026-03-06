@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理员面板 - WGCR Club</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <nav>
+      <a href="/" class="logo">WGCR CLUB</a>
+      <ul>
+        <li><a href="/#members">成员</a></li>
+        <li><a href="/#content">内容</a></li>
+        <li><a href="/#about">关于</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <div class="user-info">
+          <span id="adminUsername"></span>
+          <button class="btn-logout" onclick="authManager.logout()">登出</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 style="font-size: 2.5rem; color: var(--neon-pink); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+      ⚙️ 管理员控制面板
+    </h1>
+    <p style="color: var(--text-secondary); margin-bottom: 2rem;">欢迎，管理员！在这里您可以管理用户、发布内容和配置系统。</p>
+
+    <!-- Dashboard Stats -->
+    <div id="adminStats" style="margin-bottom: 3rem;"></div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" style="display: block;">
+      <!-- Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="content">发布内容</button>
+        <button class="admin-tab" data-tab="contents">内容管理</button>
+        <button class="admin-tab" data-tab="users">用户管理</button>
+        <button class="admin-tab" data-tab="admins">添加管理员</button>
+      </div>
+
+      <!-- Content Upload Tab -->
+      <div class="admin-tab-content active" id="contentTab">
+        <h3 style="color: var(--neon-cyan); margin-bottom: 1.5rem;">发布新内容</h3>
+        <form id="uploadForm">
+          <div class="form-group">
+            <label for="contentTitle">标题</label>
+            <input type="text" id="contentTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="contentDescription">描述</label>
+            <textarea id="contentDescription" required style="min-height: 150px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="contentType">内容类型</label>
+            <select id="contentType" required>
+              <option value="公告">📢 公告</option>
+              <option value="项目">📁 项目</option>
+              <option value="分享">🔗 分享</option>
+              <option value="动态">📰 动态</option>
+            </select>
+          </div>
+
+          <!-- Storage Configuration Tips -->
+          <div style="background: rgba(217, 70, 255, 0.1); border-left: 3px solid var(--neon-pink); padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 2px;">
+            <p style="color: var(--neon-pink); margin-bottom: 0.5rem; font-weight: bold;">💾 图片和文件上传指南</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+              当前系统使用本地浏览器存储。如需添加云存储（推荐用于生产环境），请参考项目文档中的「云存储配置」部分。
+            </p>
+            <p style="color: var(--accent-green); font-size: 0.85rem;">
+              ✓ 推荐方案：<br>
+              • 阿里云OSS - 国内速度快，文档完整<br>
+              • 腾讯云COS - 集成容易，功能齐全<br>
+              • 七牛云 - 免费额度大，适合初期
+            </p>
+          </div>
+
+          <div class="form-buttons">
+            <button type="reset" class="btn-secondary">重置</button>
+            <button type="submit" class="btn-primary">发布内容</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Contents List Tab -->
+      <div class="admin-tab-content" id="contentsTab">
+        <h3 style="color: var(--neon-cyan); margin-bottom: 1.5rem;">内容列表</h3>
+        <div class="admin-list" id="contentsListContent"></div>
+      </div>
+
+      <!-- Users List Tab -->
+      <div class="admin-tab-content" id="usersTab">
+        <h3 style="color: var(--neon-cyan); margin-bottom: 1.5rem;">用户列表</h3>
+        <div class="admin-list" id="usersListContent"></div>
+      </div>
+
+      <!-- Add Admin Tab -->
+      <div class="admin-tab-content" id="adminsTab">
+        <h3 style="color: var(--neon-pink); margin-bottom: 1.5rem;">添加管理员</h3>
+        <div style="background: rgba(255, 0, 110, 0.1); border-left: 3px solid var(--neon-pink); padding: 1.5rem; margin-bottom: 2rem; border-radius: 2px;">
+          <p style="color: var(--neon-pink); margin-bottom: 0.5rem; font-weight: bold;">⚠️ 注意</p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            添加管理员是高风险操作。请确保您完全信任要升级的用户。管理员可以上传内容、管理用户和修改系统设置。
+          </p>
+        </div>
+
+        <form id="addAdminForm">
+          <div class="form-group">
+            <label for="newAdminEmail">要升级的用户邮箱</label>
+            <input type="email" id="newAdminEmail" required placeholder="输入现有用户的邮箱地址">
+          </div>
+
+          <div style="background: var(--primary-bg); border: 1px solid var(--neon-cyan); padding: 1rem; border-radius: 2px; margin-bottom: 1.5rem;">
+            <p style="color: var(--neon-cyan); margin-bottom: 0.5rem; font-weight: bold;">📋 当前管理员</p>
+            <div id="adminsList" style="color: var(--text-secondary); font-size: 0.9rem;"></div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="reset" class="btn-secondary">重置</button>
+            <button type="submit" class="btn-primary" style="background: var(--neon-pink); border: none;">升级为管理员</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div style="margin-top: 3rem; text-align: center;">
+      <button class="btn-primary" onclick="window.location.href='/'">返回主页</button>
+    </div>
+  </main>
+
+  <script src="../js/auth.js"></script>
+  <script src="admin.js"></script>
+  <script>
+    // Update admin username
+    document.addEventListener('DOMContentLoaded', function() {
+      const adminUsername = document.getElementById('adminUsername');
+      if (adminUsername && authManager.currentUser) {
+        adminUsername.textContent = `👤 ${authManager.currentUser.username} (管理员)`;
+      }
+
+      // Load admins list
+      const adminsList = document.getElementById('adminsList');
+      if (adminsList) {
+        const users = authManager.getAllUsers();
+        const admins = users.filter(u => u.role === 'admin');
+        if (admins.length === 0) {
+          adminsList.innerHTML = '<p style="color: var(--text-secondary);">暂无管理员</p>';
+        } else {
+          adminsList.innerHTML = admins.map(admin => 
+            `<div style="padding: 0.5rem 0;">• ${admin.email} (${admin.username})</div>`
+          ).join('');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
