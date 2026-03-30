@@ -164,6 +164,170 @@
                 opacity: 1;
             }
         }
+        
+        /* 平面图上传相关样式 */
+        .upload-zone {
+            border: 2px dashed #475569;
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .upload-zone.dragover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        /* 3D设备动画效果 */
+        .device-icon-highlight {
+            animation: highlightPulse 1s ease-in-out 3;
+        }
+        @keyframes highlightPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
+            }
+            50% {
+                transform: scale(1.3);
+                box-shadow: 0 0 0 20px rgba(234, 179, 8, 0);
+            }
+        }
+        
+        /* 场景激活效果 */
+        .scene-activation {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(59, 130, 246, 0.95);
+            padding: 12px 24px;
+            border-radius: 12px;
+            z-index: 100;
+            animation: slideDown 0.5s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* AI工作流浮层 */
+        .ai-workflow-overlay {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: min(280px, calc(100% - 24px));
+            max-height: 52%;
+            padding: 10px;
+            border-radius: 12px;
+            z-index: 35;
+            display: none;
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+        .ai-workflow-overlay.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .workflow-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+        .workflow-phase {
+            font-size: 12px;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+        }
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 230px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .workflow-step {
+            display: flex;
+            gap: 8px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(30, 41, 59, 0.45);
+            transition: all 0.2s ease;
+        }
+        .workflow-step.pending {
+            opacity: 0.7;
+        }
+        .workflow-step.running {
+            border-color: rgba(59, 130, 246, 0.8);
+            background: rgba(59, 130, 246, 0.2);
+            opacity: 1;
+        }
+        .workflow-step.done {
+            border-color: rgba(16, 185, 129, 0.7);
+            background: rgba(16, 185, 129, 0.18);
+            opacity: 1;
+        }
+        .workflow-step-index {
+            width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f8fafc;
+            background: rgba(100, 116, 139, 0.8);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .workflow-step.running .workflow-step-index {
+            background: #2563eb;
+            animation: pulse 1.2s infinite;
+        }
+        .workflow-step.done .workflow-step-index {
+            background: #10b981;
+        }
+        .workflow-step-title {
+            font-size: 12px;
+            color: #f8fafc;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        .workflow-step-desc {
+            font-size: 11px;
+            color: #cbd5e1;
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+        .ai-plan-card ol {
+            margin: 8px 0 0;
+            padding-left: 18px;
+        }
+        .ai-plan-card li {
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-50">
@@ -194,10 +358,123 @@
         </header>
         
         <!-- 主内容区 -->
-        <main class="flex-1 overflow-hidden">
+        <main class="flex-1 overflow-hidden relative">
+            <!-- 平面图上传模态框 -->
+            <div id="floorplan-modal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center hidden">
+                <div class="glassmorphism rounded-2xl p-6 w-full max-w-md mx-4 relative">
+                    <button onclick="closeFloorplanModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    
+                    <h3 class="text-xl font-bold mb-2">上传房屋平面图</h3>
+                    <p class="text-gray-400 text-sm mb-6">AI将自动识别房间结构并生成3D模型</p>
+                    
+                    <!-- 上传区域 -->
+                    <div id="upload-zone" class="upload-zone rounded-xl p-8 text-center mb-4 cursor-pointer">
+                        <input type="file" id="floorplan-upload" accept="image/*" class="hidden">
+                        <label for="floorplan-upload" class="cursor-pointer">
+                            <svg class="w-16 h-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="text-gray-300 mb-2">点击上传或拖放平面图</p>
+                            <p class="text-xs text-gray-500">支持JPG、PNG格式，最大5MB</p>
+                        </label>
+                    </div>
+                    
+                    <!-- 预览区域 -->
+                    <div id="floorplan-preview" class="hidden mb-4">
+                        <img id="preview-image" src="" alt="平面图预览" class="w-full h-48 object-contain rounded-lg bg-slate-800">
+                    </div>
+                    
+                    <!-- 演示用平面图选项 -->
+                    <div id="demo-floorplan" class="mb-4 p-3 bg-slate-800/50 rounded-lg">
+                        <p class="text-sm text-gray-400 mb-2">历史上传图片：</p>
+                        <div class="flex gap-2 overflow-x-auto">
+                            <img src="https://s.coze.cn/image/qB69qd2NqZ4/" alt="演示平面图1" class="w-20 h-20 object-cover rounded cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all" onclick="selectDemoFloorplan(this.src)">
+                            <img src="https://s.coze.cn/image/H_KUe6mJEtA/" alt="演示平面图2" class="w-20 h-20 object-cover rounded cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all" onclick="selectDemoFloorplan(this.src)">
+                            <img src="https://s.coze.cn/image/cwbWtgsI6t0/" alt="演示平面图3" class="w-20 h-20 object-cover rounded cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all" onclick="selectDemoFloorplan(this.src)">
+                        </div>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="flex gap-3">
+                        <button onclick="closeFloorplanModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-medium transition-all">
+                            取消
+                        </button>
+                        <button id="generate-model-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            生成3D模型
+                        </button>
+                    </div>
+                    
+                    <!-- 生成进度 -->
+                    <div id="generation-progress" class="hidden mt-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-400">正在生成3D模型...</span>
+                            <span id="progress-percent" class="text-sm text-blue-500">0%</span>
+                        </div>
+                        <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- 首页 -->
             <div id="home-view" class="h-full overflow-y-auto p-4">
+                <!-- 快速操作区 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">快速操作</h3>
+                    <div class="flex gap-3 overflow-x-auto pb-2">
+                        <button onclick="openFloorplanModal()" class="flex-shrink-0 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-6 py-4 rounded-xl flex items-center gap-3 transition-all shadow-lg">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <div class="text-left">
+                                <p class="font-semibold">上传平面图</p>
+                                <p class="text-xs text-blue-200">生成3D模型</p>
+                            </div>
+                        </button>
+                        
+                        <button class="flex-shrink-0 glassmorphism hover:bg-slate-700 px-6 py-4 rounded-xl flex items-center gap-3 transition-all">
+                            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            <div class="text-left">
+                                <p class="font-semibold">安防检查</p>
+                                <p class="text-xs text-gray-400">一键查看</p>
+                            </div>
+                        </button>
+                        
+                        <button class="flex-shrink-0 glassmorphism hover:bg-slate-700 px-6 py-4 rounded-xl flex items-center gap-3 transition-all">
+                            <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <div class="text-left">
+                                <p class="font-semibold">快速充电</p>
+                                <p class="text-xs text-gray-400">智能调度</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
                 <!-- 欢迎卡片 -->
+                <div class="glassmorphism rounded-xl p-6 mb-6 bg-gradient-to-br from-blue-900/20 to-purple-900/20">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl">
+                            👋
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-1">下午好，主人</h2>
+                            <p class="text-gray-400">今天是2025年1月15日，星期三</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="text-sm text-green-400">●</span>
+                                <span class="text-sm text-gray-400">所有设备运行正常</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="glassmorphism rounded-xl p-6 mb-6">
                     <div class="flex items-center justify-between">
                         <div>
@@ -247,6 +524,15 @@
                             浴室
                         </div>
                     </div>
+                </div>
+
+                <!-- 生活建议 -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">生活建议</h3>
+                        <button onclick="refreshSuggestions()" class="text-sm text-blue-400 hover:text-blue-300">刷新建议</button>
+                    </div>
+                    <div id="suggestion-list" class="space-y-3"></div>
                 </div>
                 
                 <!-- 设备控制区 -->
@@ -466,12 +752,97 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 统计页 -->
+            <div id="stats-view" class="h-full overflow-y-auto p-4 hidden">
+                <div class="glassmorphism rounded-xl p-5 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">能耗统计</h3>
+                        <div class="flex gap-2">
+                            <button onclick="switchStatsRange('daily')" id="stats-daily" class="bg-blue-600 px-3 py-1 rounded-lg text-xs">今日</button>
+                            <button onclick="switchStatsRange('weekly')" id="stats-weekly" class="bg-slate-700 px-3 py-1 rounded-lg text-xs">本周</button>
+                            <button onclick="switchStatsRange('monthly')" id="stats-monthly" class="bg-slate-700 px-3 py-1 rounded-lg text-xs">本月</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-slate-800 rounded-lg p-4">
+                            <p class="text-sm text-gray-400 mb-1">总能耗</p>
+                            <p id="stats-total" class="text-2xl font-bold">12.5度</p>
+                        </div>
+                        <div class="bg-slate-800 rounded-lg p-4">
+                            <p class="text-sm text-gray-400 mb-1">预估电费</p>
+                            <p id="stats-cost" class="text-2xl font-bold">¥10</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span>空调</span><span id="bar-ac-label">64%</span></div>
+                            <div class="h-2 bg-slate-700 rounded-full overflow-hidden"><div id="bar-ac" class="h-full bg-blue-500" style="width:64%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span>灯具</span><span id="bar-light-label">20%</span></div>
+                            <div class="h-2 bg-slate-700 rounded-full overflow-hidden"><div id="bar-light" class="h-full bg-yellow-500" style="width:20%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span>其他</span><span id="bar-other-label">16%</span></div>
+                            <div class="h-2 bg-slate-700 rounded-full overflow-hidden"><div id="bar-other" class="h-full bg-emerald-500" style="width:16%"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glassmorphism rounded-xl p-5">
+                    <h3 class="text-lg font-semibold mb-3">趋势说明</h3>
+                    <p id="stats-note" class="text-sm text-gray-400">今天空调使用时长较高，建议开启节能模式。</p>
+                </div>
+            </div>
+
+            <!-- 设置页 -->
+            <div id="settings-view" class="h-full overflow-y-auto p-4 hidden">
+                <div class="glassmorphism rounded-xl p-5 mb-4">
+                    <h3 class="text-lg font-semibold mb-4">通知设置</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between">
+                            <span>生活建议推送</span>
+                            <input id="setting-suggestion" type="checkbox" checked onchange="toggleSetting('suggestionPush', this.checked)">
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <span>高优先级弹窗提醒</span>
+                            <input id="setting-priority" type="checkbox" checked onchange="toggleSetting('priorityAlert', this.checked)">
+                        </label>
+                    </div>
+                </div>
+                <div class="glassmorphism rounded-xl p-5 mb-4">
+                    <h3 class="text-lg font-semibold mb-4">设备显示</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between">
+                            <span>3D自动旋转</span>
+                            <input id="setting-autorotate" type="checkbox" checked onchange="toggleSetting('autoRotate', this.checked)">
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <span>显示设备状态动画</span>
+                            <input id="setting-animation" type="checkbox" checked onchange="toggleSetting('statusAnimation', this.checked)">
+                        </label>
+                    </div>
+                </div>
+                <div class="glassmorphism rounded-xl p-5">
+                    <h3 class="text-lg font-semibold mb-4">关于应用</h3>
+                    <p class="text-sm text-gray-400">全屋智能控制Demo v1.0</p>
+                </div>
+            </div>
             
             <!-- 3D视图 -->
             <div id="3d-view" class="h-full hidden">
                 <div id="canvas-container" class="relative">
                     <canvas id="three-canvas"></canvas>
                     <div id="device-icons" class="absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+
+                    <div id="ai-workflow-overlay" class="ai-workflow-overlay">
+                        <div class="workflow-header">
+                            <p class="workflow-title">AI处理流程</p>
+                            <button onclick="closeAiWorkflow()" class="text-xs text-gray-300 hover:text-white">关闭</button>
+                        </div>
+                        <div id="workflow-phase" class="workflow-phase">等待触发</div>
+                        <div id="workflow-steps" class="workflow-steps"></div>
+                    </div>
                     
                     <!-- 3D顶部控制栏 -->
                     <div class="absolute top-4 left-4 right-4 flex justify-between items-center">
@@ -621,9 +992,10 @@
                 <div class="p-4 bg-slate-900 border-t border-slate-800">
                     <!-- 快捷建议 -->
                     <div class="flex gap-2 mb-3 overflow-x-auto pb-2">
-                        <div class="suggestion-chip whitespace-nowrap" onclick="insertChatText('打开客厅灯')">打开客厅灯</div>
+                        <div class="suggestion-chip whitespace-nowrap" onclick="insertChatText('我马上回家')">我马上回家</div>
+                        <div class="suggestion-chip whitespace-nowrap" onclick="insertChatText('晚安，开启睡眠模式')">晚安，开启睡眠模式</div>
                         <div class="suggestion-chip whitespace-nowrap" onclick="insertChatText('开启观影模式')">开启观影模式</div>
-                        <div class="suggestion-chip whitespace-nowrap" onclick="insertChatText('查看能耗')">查看能耗</div>
+                        <div class="suggestion-chip whitespace-nowrap" onclick="insertChatText('我要出门了')">我要出门了</div>
                     </div>
                     
                     <!-- 输入框 -->
@@ -652,59 +1024,17 @@
             </div>
         </div>
         
-        <!-- 设备控制面板 -->
-        <div id="device-panel" class="device-panel hidden" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h3 id="panel-device-name" class="text-lg font-semibold mb-1">客厅主灯</h3>
-                    <p id="panel-device-status" class="text-sm text-gray-400">运行中</p>
-                </div>
-                <button onclick="closeDevicePanel()" class="text-gray-400 hover:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-gray-300">亮度</span>
-                        <span id="brightness-value" class="text-sm">80%</span>
-                    </div>
-                    <input type="range" id="brightness-slider" min="0" max="100" value="80" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                </div>
-                
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-gray-300">色温</span>
-                        <span id="color-temp-value" class="text-sm">暖光</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="setColorTemp('warm')" class="flex-1 bg-yellow-500 text-yellow-900 py-2 rounded-lg text-sm font-medium">暖光</button>
-                        <button onclick="setColorTemp('neutral')" class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg text-sm font-medium">中性</button>
-                        <button onclick="setColorTemp('cool')" class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg text-sm font-medium">冷光</button>
-                    </div>
-                </div>
-                
-                <div class="flex gap-3 pt-4">
-                    <button onclick="toggleDevice()" id="device-toggle-btn" class="flex-1 bg-red-600 hover:bg-red-700 py-3 rounded-lg font-medium transition-all">关闭</button>
-                    <button class="flex-1 bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-medium transition-all">定时</button>
-                </div>
-            </div>
-        </div>
-        
         <!-- 底部导航 -->
         <footer class="glassmorphism px-4 py-3">
             <div class="flex justify-around relative">
-                <button onclick="switchTab('home')" class="flex flex-col items-center text-blue-500">
+                <button onclick="switchTab('home', event)" data-tab="home" class="flex flex-col items-center text-blue-500">
                     <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     <span class="text-xs">首页</span>
                 </button>
                 
-                <button onclick="switchTab('3d')" class="flex flex-col items-center text-gray-400 hover:text-white transition-all">
+                <button onclick="switchTab('3d', event)" data-tab="3d" class="flex flex-col items-center text-gray-400 hover:text-white transition-all">
                     <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
                     </svg>
@@ -719,14 +1049,14 @@
                     </button>
                 </div>
                 
-                <button onclick="switchTab('stats')" class="flex flex-col items-center text-gray-400 hover:text-white transition-all">
+                <button onclick="switchTab('stats', event)" data-tab="stats" class="flex flex-col items-center text-gray-400 hover:text-white transition-all">
                     <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                     <span class="text-xs">统计</span>
                 </button>
                 
-                <button onclick="switchTab('settings')" class="flex flex-col items-center text-gray-400 hover:text-white transition-all">
+                <button onclick="switchTab('settings', event)" data-tab="settings" class="flex flex-col items-center text-gray-400 hover:text-white transition-all">
                     <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
                     </svg>
@@ -737,83 +1067,31 @@
     </div>
     
     <script>
-        // 页面切换
-        function switchTab(tab) {
-            // 更新底部导航状态
-            document.querySelectorAll('footer button').forEach(btn => {
-                btn.classList.remove('text-blue-500');
-                btn.classList.add('text-gray-400');
-            });
-            
-            event.currentTarget.classList.remove('text-gray-400');
-            event.currentTarget.classList.add('text-blue-500');
-            
-            // 切换视图
-            if (tab === 'home') {
-                document.getElementById('home-view').classList.remove('hidden');
-                document.getElementById('3d-view').classList.add('hidden');
-            } else if (tab === '3d') {
-                document.getElementById('home-view').classList.add('hidden');
-                document.getElementById('3d-view').classList.remove('hidden');
-                init3D();
+        const floorplanState = {
+            selectedImage: '',
+            source: ''
+        };
+
+        const settingsState = {
+            suggestionPush: true,
+            priorityAlert: true,
+            autoRotate: true,
+            statusAnimation: true
+        };
+
+        const statsState = {
+            currentRange: 'daily',
+            presets: {
+                daily: { total: 12.5, cost: 10, ac: 64, light: 20, other: 16, note: '今天空调使用时长较高，建议开启节能模式。' },
+                weekly: { total: 85.3, cost: 68, ac: 58, light: 24, other: 18, note: '本周晚间能耗偏高，可尝试自动睡眠场景。' },
+                monthly: { total: 350.0, cost: 280, ac: 61, light: 22, other: 17, note: '本月能耗总体稳定，节能场景已带来明显效果。' }
             }
-        }
-        
-        // 对话侧边栏
-        function toggleChat() {
-            const sidebar = document.getElementById('chat-sidebar');
-            sidebar.classList.toggle('translate-x-full');
-        }
-        
-        function handleChatKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendChatMessage();
-            }
-        }
-        
-        function insertChatText(text) {
-            document.getElementById('chat-input').value = text;
-        }
-        
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            // 添加用户消息
-            const messagesContainer = document.getElementById('chat-messages');
-            const userMessage = document.createElement('div');
-            userMessage.className = 'user-message message-bubble';
-            userMessage.innerHTML = `<p>${message}</p>`;
-            messagesContainer.appendChild(userMessage);
-            
-            input.value = '';
-            
-            // 模拟AI响应
-            setTimeout(() => {
-                const aiMessage = document.createElement('div');
-                aiMessage.className = 'ai-message message-bubble';
-                
-                let response = '我收到了您的消息，正在处理中...';
-                if (message.includes('灯')) {
-                    response = '✅ 已执行：客厅灯已开启，亮度80%';
-                } else if (message.includes('冷') || message.includes('hot')) {
-                    response = '🌡️ 我已经帮你调高温度了<br>客厅空调：27°C';
-                } else if (message.includes('能耗')) {
-                    response = '📊 今日能耗统计<br>总计：12.5度<br>预计电费：约10元';
-                } else if (message.includes('模式')) {
-                    response = '✅ 观影模式已开启<br>窗帘已关闭、灯光已调暗';
-                }
-                
-                aiMessage.innerHTML = `<p>${response}</p>`;
-                messagesContainer.appendChild(aiMessage);
-                
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 1000);
-            
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-        
+        };
+
+        const suggestionState = {
+            list: []
+        };
+
         // 3D场景相关
         let scene, camera, renderer, room;
         let isRotating = true;
@@ -822,89 +1100,755 @@
         let iconElements = {};
         let currentDeviceId = null;
         let devicesData = {};
-        
+        let iconOffsets = {};
+        let iconInteractionState = {
+            longPressTimer: null,
+            draggingId: null,
+            moved: false,
+            startX: 0,
+            startY: 0,
+            lastClick: {}
+        };
+
+        let aiWorkflowTimers = [];
+
+        function initializeDemo() {
+            initFloorplanUpload();
+            renderSuggestions();
+            switchStatsRange('daily');
+        }
+
+        // 页面切换
+        function switchTab(tab, evt) {
+            const allViews = ['home-view', '3d-view', 'stats-view', 'settings-view'];
+            allViews.forEach(viewId => {
+                const target = document.getElementById(viewId);
+                if (target) target.classList.add('hidden');
+            });
+
+            const activeMap = {
+                home: 'home-view',
+                '3d': '3d-view',
+                stats: 'stats-view',
+                settings: 'settings-view'
+            };
+
+            const activeView = document.getElementById(activeMap[tab] || 'home-view');
+            if (activeView) activeView.classList.remove('hidden');
+
+            document.querySelectorAll('footer button[data-tab]').forEach(btn => {
+                btn.classList.remove('text-blue-500');
+                btn.classList.add('text-gray-400');
+            });
+
+            const activeBtn = evt?.currentTarget || document.querySelector(`footer button[data-tab="${tab}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-blue-500');
+            }
+
+            if (tab === '3d') {
+                init3D();
+            }
+
+            if (tab === 'stats') {
+                switchStatsRange(statsState.currentRange);
+            }
+        }
+
+        // 平面图上传流程
+        function openFloorplanModal() {
+            document.getElementById('floorplan-modal').classList.remove('hidden');
+        }
+
+        function closeFloorplanModal() {
+            document.getElementById('floorplan-modal').classList.add('hidden');
+        }
+
+        function initFloorplanUpload() {
+            const uploadZone = document.getElementById('upload-zone');
+            const uploadInput = document.getElementById('floorplan-upload');
+            const generateBtn = document.getElementById('generate-model-btn');
+
+            uploadInput.addEventListener('change', (event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    floorplanState.selectedImage = e.target.result;
+                    floorplanState.source = 'upload';
+                    showFloorplanPreview(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    uploadZone.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                });
+            });
+
+            uploadZone.addEventListener('drop', (event) => {
+                const file = event.dataTransfer?.files?.[0];
+                if (!file || !file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    floorplanState.selectedImage = e.target.result;
+                    floorplanState.source = 'drag';
+                    showFloorplanPreview(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            generateBtn.addEventListener('click', simulateGeneration);
+        }
+
+        function selectDemoFloorplan(src) {
+            floorplanState.selectedImage = src;
+            floorplanState.source = 'demo';
+            showFloorplanPreview(src);
+        }
+
+        function showFloorplanPreview(imageSrc) {
+            const preview = document.getElementById('floorplan-preview');
+            const previewImage = document.getElementById('preview-image');
+            const generateBtn = document.getElementById('generate-model-btn');
+
+            previewImage.src = imageSrc;
+            preview.classList.remove('hidden');
+            generateBtn.disabled = false;
+        }
+
+        function simulateGeneration() {
+            if (!floorplanState.selectedImage) return;
+
+            const generateBtn = document.getElementById('generate-model-btn');
+            const progressWrap = document.getElementById('generation-progress');
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercent = document.getElementById('progress-percent');
+
+            generateBtn.disabled = true;
+            progressWrap.classList.remove('hidden');
+
+            let progress = 0;
+            const timer = setInterval(() => {
+                progress += progress < 60 ? 4 : 2;
+                if (progress > 100) progress = 100;
+
+                progressBar.style.width = `${progress}%`;
+                progressPercent.textContent = `${progress}%`;
+
+                if (progress === 100) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        closeFloorplanModal();
+                        switchTab('3d');
+                        showSceneActivation('🎉 3D模型生成成功！已自动切换到3D视图');
+                        highlightNewModel();
+                        generateBtn.disabled = false;
+                        progressWrap.classList.add('hidden');
+                        progressBar.style.width = '0%';
+                        progressPercent.textContent = '0%';
+                    }, 400);
+                }
+            }, 80);
+        }
+
+        function highlightNewModel() {
+            init3D();
+            const sequence = ['light', 'ac', 'tv'];
+            sequence.forEach((id, index) => {
+                setTimeout(() => {
+                    update3DDeviceStatus(id, true);
+                }, index * 500);
+            });
+        }
+
+        // 对话侧边栏
+        function toggleChat() {
+            const sidebar = document.getElementById('chat-sidebar');
+            sidebar.classList.toggle('translate-x-full');
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function insertChatText(text) {
+            document.getElementById('chat-input').value = text;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesContainer = document.getElementById('chat-messages');
+            const userMessage = document.createElement('div');
+            userMessage.className = 'user-message message-bubble';
+            userMessage.innerHTML = `<p>${message}</p>`;
+            messagesContainer.appendChild(userMessage);
+
+            input.value = '';
+
+            const plan = buildScenarioPlan(message);
+
+            setTimeout(() => {
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'ai-message message-bubble';
+                if (plan) {
+                    aiMessage.innerHTML = `<p>我理解到你的需求是「${plan.sceneName}」。正在分析你的习惯与当前设备状态。</p>`;
+                } else {
+                    aiMessage.innerHTML = '<p>我收到了你的请求，正在处理中。你可以试试「我马上回家」「晚安，开启睡眠模式」等指令。</p>';
+                }
+                messagesContainer.appendChild(aiMessage);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                if (!plan) {
+                    return;
+                }
+
+                appendAiPlanMessage(plan);
+
+                const t1 = setTimeout(() => {
+                    closeChatSidebar();
+                    switchTab('3d');
+                    runAiWorkflow(plan);
+                }, 1400);
+                aiWorkflowTimers.push(t1);
+            }, 600);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function closeChatSidebar() {
+            const sidebar = document.getElementById('chat-sidebar');
+            if (!sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.add('translate-x-full');
+            }
+        }
+
+        function appendAiPlanMessage(plan) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const planMessage = document.createElement('div');
+            planMessage.className = 'ai-message message-bubble ai-plan-card';
+
+            const planItems = plan.steps
+                .map(step => `<li>${step.title}：${step.desc}</li>`)
+                .join('');
+
+            planMessage.innerHTML = `
+                <p><strong>AI处理计划</strong>（${plan.sceneName}）</p>
+                <ol>${planItems}</ol>
+            `;
+
+            messagesContainer.appendChild(planMessage);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function buildScenarioPlan(message) {
+            const text = message.toLowerCase();
+
+            if (text.includes('回家') || text.includes('马上回家')) {
+                return {
+                    key: 'home-coming',
+                    sceneName: '回家模式',
+                    finalTip: '🏠 回家模式执行完成，客厅环境已准备就绪。',
+                    steps: [
+                        { title: '解析意图', desc: '识别到回家场景触发', phase: 'AI意图分析中' },
+                        { title: '习惯分析', desc: '调用最近7天回家后设备偏好', phase: 'AI行为习惯分析中' },
+                        { title: '状态评估', desc: '检查客厅照明与空调状态', phase: 'AI环境状态校验中' },
+                        { title: '开启客厅灯', desc: '将客厅主灯切换到舒适亮度', deviceId: 'light', active: true, phase: '执行设备联动中' },
+                        { title: '开启客厅空调', desc: '设定空调为26°C制冷模式', deviceId: 'ac', active: true, targetTemperature: 26, openPanel: true, phase: '执行设备联动中' },
+                        { title: '打开卧室灯', desc: '预先点亮卧室照明', deviceId: 'bedroom-light', active: true, phase: '执行设备联动中' },
+                        { title: '完成校验', desc: '确认关键设备已开启并反馈完成', phase: '流程收尾中' }
+                    ]
+                };
+            }
+
+            if (text.includes('晚安') || text.includes('睡') || text.includes('睡眠模式')) {
+                return {
+                    key: 'sleep-mode',
+                    sceneName: '睡眠模式',
+                    finalTip: '🌙 睡眠模式执行完成，已切换到安静与节能状态。',
+                    steps: [
+                        { title: '解析意图', desc: '识别到睡眠场景触发', phase: 'AI意图分析中' },
+                        { title: '作息匹配', desc: '匹配你的夜间作息偏好', phase: 'AI行为习惯分析中' },
+                        { title: '关闭客厅灯', desc: '关闭公共区域主照明', deviceId: 'light', active: false, phase: '执行设备联动中' },
+                        { title: '关闭厨房灯', desc: '关闭厨房照明避免光污染', deviceId: 'kitchen-light', active: false, phase: '执行设备联动中' },
+                        { title: '调节客厅空调', desc: '空调切换夜间舒眠温度 24°C', deviceId: 'ac', active: true, targetTemperature: 24, openPanel: true, phase: '执行设备联动中' },
+                        { title: '调节浴室空调', desc: '浴室空调进入低功耗 23°C 模式', deviceId: 'bathroom-ac', active: true, targetTemperature: 23, phase: '执行设备联动中' },
+                        { title: '完成校验', desc: '夜间场景已部署，进入睡眠守护', phase: '流程收尾中' }
+                    ]
+                };
+            }
+
+            if (text.includes('观影') || text.includes('电影')) {
+                return {
+                    key: 'movie-mode',
+                    sceneName: '观影模式',
+                    finalTip: '🎬 观影模式执行完成，客厅已切换影院氛围。',
+                    steps: [
+                        { title: '解析意图', desc: '识别到观影场景触发', phase: 'AI意图分析中' },
+                        { title: '氛围分析', desc: '读取你常用观影亮度与温度', phase: 'AI行为习惯分析中' },
+                        { title: '开启电视', desc: '启动客厅电视设备', deviceId: 'tv', active: true, phase: '执行设备联动中' },
+                        { title: '调暗客厅灯', desc: '客厅主灯调至低亮度观影状态', deviceId: 'light', active: true, phase: '执行设备联动中' },
+                        { title: '关闭卧室灯', desc: '减少多余环境光', deviceId: 'bedroom-light', active: false, phase: '执行设备联动中' },
+                        { title: '调节空调', desc: '空调设定到舒适观影温度 22°C', deviceId: 'ac', active: true, targetTemperature: 22, openPanel: true, phase: '执行设备联动中' },
+                        { title: '完成校验', desc: '影院环境准备完成', phase: '流程收尾中' }
+                    ]
+                };
+            }
+
+            if (text.includes('出门') || text.includes('离家')) {
+                return {
+                    key: 'away-mode',
+                    sceneName: '离家模式',
+                    finalTip: '🚪 离家模式执行完成，已进入节能守护状态。',
+                    steps: [
+                        { title: '解析意图', desc: '识别到离家场景触发', phase: 'AI意图分析中' },
+                        { title: '设备盘点', desc: '检查全屋运行中的高耗能设备', phase: 'AI环境状态校验中' },
+                        { title: '关闭客厅灯', desc: '关闭客厅主照明', deviceId: 'light', active: false, phase: '执行设备联动中' },
+                        { title: '关闭卧室灯', desc: '关闭卧室照明', deviceId: 'bedroom-light', active: false, phase: '执行设备联动中' },
+                        { title: '关闭厨房灯', desc: '关闭厨房照明', deviceId: 'kitchen-light', active: false, phase: '执行设备联动中' },
+                        { title: '关闭客厅空调', desc: '客厅空调进入关闭状态', deviceId: 'ac', active: false, phase: '执行设备联动中' },
+                        { title: '关闭浴室空调', desc: '浴室空调进入关闭状态', deviceId: 'bathroom-ac', active: false, phase: '执行设备联动中' }
+                    ]
+                };
+            }
+
+            return null;
+        }
+
+        function closeAiWorkflow() {
+            const overlay = document.getElementById('ai-workflow-overlay');
+            overlay.classList.remove('show');
+            aiWorkflowTimers.forEach(timerId => clearTimeout(timerId));
+            aiWorkflowTimers = [];
+        }
+
+        function showAiWorkflowOverlay(plan) {
+            const overlay = document.getElementById('ai-workflow-overlay');
+            const phase = document.getElementById('workflow-phase');
+            const stepsWrap = document.getElementById('workflow-steps');
+
+            phase.textContent = `${plan.sceneName} · 准备执行`;
+            stepsWrap.innerHTML = plan.steps
+                .map((step, index) => `
+                    <div id="workflow-step-${index}" class="workflow-step pending">
+                        <div class="workflow-step-index">${index + 1}</div>
+                        <div>
+                            <div class="workflow-step-title">${step.title}</div>
+                            <div class="workflow-step-desc" id="workflow-step-desc-${index}">${step.desc}</div>
+                        </div>
+                    </div>
+                `)
+                .join('');
+
+            overlay.classList.add('show');
+        }
+
+        function updateWorkflowStep(index, status, text) {
+            const step = document.getElementById(`workflow-step-${index}`);
+            const desc = document.getElementById(`workflow-step-desc-${index}`);
+            if (!step) return;
+
+            step.classList.remove('pending', 'running', 'done');
+            step.classList.add(status);
+            if (text && desc) {
+                desc.textContent = text;
+            }
+        }
+
+        function runAiWorkflow(plan) {
+            init3D();
+            showAiWorkflowOverlay(plan);
+
+            const phase = document.getElementById('workflow-phase');
+            const stepGap = 900;
+
+            plan.steps.forEach((step, index) => {
+                const timer = setTimeout(() => {
+                    if (phase) {
+                        phase.textContent = step.phase || `${plan.sceneName} · 执行中`;
+                    }
+
+                    updateWorkflowStep(index, 'running');
+
+                    const tDone = setTimeout(() => {
+                        if (step.deviceId) {
+                            update3DDeviceStatus(step.deviceId, step.active !== false, {
+                                temperature: step.targetTemperature,
+                                openPanel: step.openPanel === true
+                            });
+                        }
+                        updateWorkflowStep(index, 'done');
+                    }, 450);
+                    aiWorkflowTimers.push(tDone);
+                }, index * stepGap);
+
+                aiWorkflowTimers.push(timer);
+            });
+
+            const completeTimer = setTimeout(() => {
+                if (phase) {
+                    phase.textContent = '全部执行完成';
+                }
+                showSceneActivation(plan.finalTip);
+                refreshSuggestions();
+                switchStatsRange(statsState.currentRange);
+
+                const closeTimer = setTimeout(() => {
+                    closeAiWorkflow();
+                }, 2800);
+                aiWorkflowTimers.push(closeTimer);
+            }, plan.steps.length * stepGap + 500);
+
+            aiWorkflowTimers.push(completeTimer);
+        }
+
+        function showSceneActivation(text) {
+            const oldActivation = document.querySelector('.scene-activation');
+            if (oldActivation) oldActivation.remove();
+
+            const activation = document.createElement('div');
+            activation.className = 'scene-activation text-white font-medium';
+            activation.innerHTML = text;
+            document.body.appendChild(activation);
+
+            setTimeout(() => {
+                activation.style.opacity = '0';
+                activation.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => activation.remove(), 500);
+            }, 3000);
+        }
+
+        // 生活建议系统
+        function getRunningDevicesCount() {
+            const values = Object.values(devicesData);
+            if (!values.length) return 2;
+            return values.filter(device => device.running).length;
+        }
+
+        function refreshSuggestions() {
+            if (!settingsState.suggestionPush) {
+                suggestionState.list = [];
+                renderSuggestions();
+                return;
+            }
+
+            const runningCount = getRunningDevicesCount();
+            const stats = statsState.presets[statsState.currentRange];
+            const generated = [];
+
+            if (stats.cost > 60 || runningCount >= 4) {
+                generated.push({
+                    id: 'power-alert',
+                    level: 'high',
+                    icon: '⚡',
+                    title: '电费充值提醒',
+                    content: `预计${statsState.currentRange === 'daily' ? '今日' : '当前周期'}电费为¥${Math.round(stats.cost)}，建议开启节能模式。`
+                });
+            }
+
+            if (runningCount >= 3) {
+                generated.push({
+                    id: 'energy-advice',
+                    level: 'medium',
+                    icon: '🌿',
+                    title: '节能建议',
+                    content: `当前有${runningCount}台设备运行中，可关闭闲置设备降低能耗。`
+                });
+            }
+
+            generated.push({
+                id: 'maintenance',
+                level: 'medium',
+                icon: '🔧',
+                title: '滤芯更换提示',
+                content: '空气净化器滤芯已累计使用1200小时，建议本周内更换。'
+            });
+
+            if (settingsState.priorityAlert) {
+                generated.push({
+                    id: 'security',
+                    level: 'high',
+                    icon: '🚨',
+                    title: '安全提醒',
+                    content: '检测到后门在夜间有异常开启记录，请核查门窗传感器。'
+                });
+            }
+
+            suggestionState.list = generated.slice(0, 4);
+            renderSuggestions();
+        }
+
+        function renderSuggestions() {
+            const container = document.getElementById('suggestion-list');
+            if (!container) return;
+
+            if (!suggestionState.list.length) {
+                container.innerHTML = '<div class="glassmorphism rounded-xl p-4 text-sm text-gray-400">当前无新的生活建议。</div>';
+                return;
+            }
+
+            container.innerHTML = suggestionState.list.map(item => {
+                const accent = item.level === 'high' ? 'border-red-400/40' : 'border-blue-400/30';
+                return `
+                    <div class="glassmorphism rounded-xl p-4 border ${accent}">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-start gap-3">
+                                <div class="text-xl">${item.icon}</div>
+                                <div>
+                                    <p class="font-semibold">${item.title}</p>
+                                    <p class="text-sm text-gray-400 mt-1">${item.content}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="handleSuggestionAction('${item.id}', 'do')" class="bg-blue-600 hover:bg-blue-700 text-xs px-3 py-2 rounded-lg">立即处理</button>
+                            <button onclick="handleSuggestionAction('${item.id}', 'later')" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-2 rounded-lg">稍后提醒</button>
+                            <button onclick="handleSuggestionAction('${item.id}', 'ignore')" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded-lg">忽略</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleSuggestionAction(id, action) {
+            if (action === 'do') {
+                showSceneActivation('✅ 建议已处理，系统将持续优化推荐');
+                suggestionState.list = suggestionState.list.filter(item => item.id !== id);
+            }
+
+            if (action === 'later') {
+                suggestionState.list = suggestionState.list.map(item => {
+                    if (item.id !== id) return item;
+                    return { ...item, content: '已设置稍后提醒，将在明天 09:00 再次推送。' };
+                });
+            }
+
+            if (action === 'ignore') {
+                suggestionState.list = suggestionState.list.filter(item => item.id !== id);
+            }
+
+            renderSuggestions();
+        }
+
+        // 统计与设置
+        function switchStatsRange(range) {
+            statsState.currentRange = range;
+            const preset = { ...statsState.presets[range] };
+            const runningCount = getRunningDevicesCount();
+            const dynamicOffset = runningCount * (range === 'daily' ? 0.3 : range === 'weekly' ? 0.8 : 2.2);
+
+            preset.total = Number((preset.total + dynamicOffset).toFixed(1));
+            preset.cost = Math.round(preset.cost + dynamicOffset * 0.8);
+
+            document.getElementById('stats-total').textContent = `${preset.total}度`;
+            document.getElementById('stats-cost').textContent = `¥${preset.cost}`;
+            document.getElementById('bar-ac').style.width = `${preset.ac}%`;
+            document.getElementById('bar-light').style.width = `${preset.light}%`;
+            document.getElementById('bar-other').style.width = `${preset.other}%`;
+            document.getElementById('bar-ac-label').textContent = `${preset.ac}%`;
+            document.getElementById('bar-light-label').textContent = `${preset.light}%`;
+            document.getElementById('bar-other-label').textContent = `${preset.other}%`;
+            document.getElementById('stats-note').textContent = preset.note;
+
+            ['daily', 'weekly', 'monthly'].forEach(key => {
+                const btn = document.getElementById(`stats-${key}`);
+                btn.classList.toggle('bg-blue-600', key === range);
+                btn.classList.toggle('bg-slate-700', key !== range);
+            });
+
+            refreshSuggestions();
+        }
+
+        function toggleSetting(key, value) {
+            settingsState[key] = value;
+
+            if (key === 'autoRotate') {
+                isRotating = value;
+                const rotateBtn = document.getElementById('rotate-btn');
+                if (rotateBtn) rotateBtn.textContent = isRotating ? '停止旋转' : '开始旋转';
+            }
+
+            if (key === 'suggestionPush') {
+                refreshSuggestions();
+            }
+        }
+
+        function applyDeviceIconVisual(deviceId) {
+            const device = devicesData[deviceId];
+            const iconElement = iconElements[deviceId];
+            if (!device || !iconElement) return;
+
+            const svg = iconElement.querySelector('svg');
+
+            if (device.running) {
+                iconElement.style.background = device.activeBg || device.color;
+                iconElement.style.filter = 'saturate(1.2) brightness(1.12)';
+                iconElement.style.borderColor = 'rgba(255,255,255,0.5)';
+                if (svg) svg.style.opacity = '1';
+            } else {
+                iconElement.style.background = device.inactiveBg || 'rgba(71, 85, 105, 0.28)';
+                iconElement.style.filter = 'grayscale(1) brightness(0.72)';
+                iconElement.style.borderColor = 'rgba(148,163,184,0.28)';
+                if (svg) svg.style.opacity = '0.55';
+            }
+        }
+
+        function animateTemperatureTo(targetTemperature) {
+            const slider = document.getElementById('temp-slider');
+            const display = document.getElementById('temp-display');
+            if (!slider || !display) return;
+
+            const end = Number(targetTemperature);
+            const start = Number(slider.value || 24);
+            if (Number.isNaN(end)) return;
+
+            const steps = 10;
+            const delta = (end - start) / steps;
+            let current = start;
+            let count = 0;
+
+            const timer = setInterval(() => {
+                count += 1;
+                current += delta;
+                const value = count >= steps ? end : Math.round(current);
+                slider.value = String(value);
+                display.textContent = `${value}°C`;
+                if (currentDeviceId && devicesData[currentDeviceId]) {
+                    devicesData[currentDeviceId].temperature = value;
+                }
+
+                if (count >= steps) {
+                    clearInterval(timer);
+                }
+            }, 80);
+        }
+
+        // 更新3D设备状态
+        function update3DDeviceStatus(deviceId, isActive, options = {}) {
+            if (typeof devicesData === 'undefined' || !devicesData[deviceId]) return;
+
+            devicesData[deviceId].running = isActive;
+            const iconElement = iconElements[deviceId];
+            if (iconElement) {
+                if (settingsState.statusAnimation && isActive) {
+                    iconElement.classList.add('running', 'device-icon-highlight');
+                    setTimeout(() => iconElement.classList.remove('device-icon-highlight'), 3000);
+                } else {
+                    iconElement.classList.remove('device-icon-highlight');
+                    iconElement.classList.toggle('running', isActive);
+                }
+            }
+
+            applyDeviceIconVisual(deviceId);
+
+            if (typeof options.temperature === 'number') {
+                devicesData[deviceId].temperature = options.temperature;
+            }
+
+            if (options.openPanel) {
+                openDevicePanel(deviceId);
+                if (typeof options.temperature === 'number') {
+                    animateTemperatureTo(options.temperature);
+                }
+            }
+
+            if (currentDeviceId === deviceId) {
+                document.getElementById('panel-device-status').textContent = isActive ? '运行中' : '待机状态';
+                const powerBtn = document.getElementById('power-btn');
+                if (powerBtn) {
+                    powerBtn.textContent = isActive ? '关闭' : '开启';
+                    powerBtn.classList.toggle('bg-blue-600', isActive);
+                    powerBtn.classList.toggle('bg-slate-700', !isActive);
+                }
+            }
+
+            updateDeviceCount();
+            refreshSuggestions();
+            switchStatsRange(statsState.currentRange);
+        }
+
+        function toggleDevicePowerById(deviceId) {
+            if (!devicesData[deviceId]) return;
+            update3DDeviceStatus(deviceId, !devicesData[deviceId].running);
+        }
+
+        function updateDeviceCount() {
+            const target = document.getElementById('device-count');
+            if (!target) return;
+            target.textContent = `${getRunningDevicesCount()}台`;
+        }
+
         function init3D() {
             if (isInitialized) return;
             isInitialized = true;
-            
+
             if (typeof THREE === 'undefined') {
                 console.error('Three.js未加载');
                 return;
             }
-            
+
             const canvas = document.getElementById('three-canvas');
             const container = document.getElementById('canvas-container');
-            
-            // 创建场景
+
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0f172a);
-            
-            // 创建相机
+
             camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.set(0, 20, 20);
             camera.lookAt(0, 0, 0);
-            
-            // 创建渲染器
+
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            
-            // 添加光源
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-            
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
             const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
             directionalLight.position.set(15, 30, 15);
             directionalLight.castShadow = true;
             scene.add(directionalLight);
-            
-            const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3);
-            scene.add(hemisphereLight);
-            
-            // 创建优化的3D户型模型
+
+            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.3));
+
             createRealisticHouseModel();
-            
-            // 创建设备图标
             createDeviceIconElements();
-            
-            // 设置鼠标交互
             setup3DMouseInteractions();
-            
-            // 窗口大小监听
+
             window.addEventListener('resize', on3DWindowResize);
-            
-            // 开始渲染循环
             animate3D();
+            updateDeviceCount();
         }
-        
+
         function createRealisticHouseModel() {
             room = new THREE.Group();
-            
+
             const wallThickness = 0.3;
             const outerWallHeight = 3.5;
             const floorHeight = 0.05;
-            
-            const floorMaterial = new THREE.MeshPhongMaterial({ 
-                color: 0x1e293b,
-                side: THREE.DoubleSide
-            });
-            
-            const wallMaterial = new THREE.MeshPhongMaterial({ 
-                color: 0xf8fafc,
-                transparent: true,
-                opacity: 0.85,
-                side: THREE.DoubleSide
-            });
-            
-            const wallMaterialDark = new THREE.MeshPhongMaterial({ 
-                color: 0xe2e8f0,
-                transparent: true,
-                opacity: 0.8,
-                side: THREE.DoubleSide
-            });
-            
+
+            const floorMaterial = new THREE.MeshPhongMaterial({ color: 0x1e293b, side: THREE.DoubleSide });
+            const wallMaterial = new THREE.MeshPhongMaterial({ color: 0xf8fafc, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
+            const wallMaterialDark = new THREE.MeshPhongMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
+
             const rooms = [
                 { name: '客厅', x: 2, z: -1.5, width: 6, depth: 5 },
                 { name: '主卧', x: -4, z: -1.5, width: 4, depth: 5 },
@@ -912,39 +1856,34 @@
                 { name: '浴室', x: -4.5, z: 3.5, width: 3, depth: 3 },
                 { name: '次卧', x: 5, z: 3, width: 4, depth: 4 }
             ];
-            
+
             rooms.forEach(roomData => {
-                const floorGeometry = new THREE.BoxGeometry(
-                    roomData.width - wallThickness, 
-                    floorHeight, 
-                    roomData.depth - wallThickness
-                );
+                const floorGeometry = new THREE.BoxGeometry(roomData.width - wallThickness, floorHeight, roomData.depth - wallThickness);
                 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
                 floor.position.set(roomData.x, -floorHeight / 2, roomData.z);
                 floor.receiveShadow = true;
                 room.add(floor);
-                
                 createRoomLabel(roomData.name, roomData.x, 0.1, roomData.z);
             });
-            
+
             const houseWidth = 14;
             const houseDepth = 9;
-            
+
             createWall(houseWidth, outerWallHeight, wallThickness, 0, outerWallHeight / 2, -houseDepth / 2, 0, wallMaterial);
             createWall(houseWidth, outerWallHeight, wallThickness, 0, outerWallHeight / 2, houseDepth / 2, 0, wallMaterial);
             createWall(houseDepth, outerWallHeight, wallThickness, -houseWidth / 2, outerWallHeight / 2, 0, Math.PI / 2, wallMaterial);
             createWall(houseDepth, outerWallHeight, wallThickness, houseWidth / 2, outerWallHeight / 2, 0, Math.PI / 2, wallMaterial);
-            
+
             createWall(5, outerWallHeight, wallThickness, -1, outerWallHeight / 2, -1.5, Math.PI / 2, wallMaterialDark);
             createWall(3, outerWallHeight, wallThickness, 4, outerWallHeight / 2, 1, Math.PI / 2, wallMaterialDark);
             createWall(3, outerWallHeight, wallThickness, -1, outerWallHeight / 2, 4.5, Math.PI / 2, wallMaterialDark);
             createWall(4, outerWallHeight, wallThickness, -5.5, outerWallHeight / 2, 2.5, 0, wallMaterialDark);
             createWall(3, outerWallHeight, wallThickness, 3.5, outerWallHeight / 2, 2.5, 0, wallMaterialDark);
-            
+
             createFurnitureModels();
             scene.add(room);
         }
-        
+
         function createWall(width, height, depth, x, y, z, rotationY, material) {
             const wallGeometry = new THREE.BoxGeometry(width, height, depth);
             const wall = new THREE.Mesh(wallGeometry, material);
@@ -954,146 +1893,70 @@
             wall.receiveShadow = true;
             room.add(wall);
         }
-        
+
         function createFurnitureModels() {
-            const furnitureMaterial = new THREE.MeshPhongMaterial({ 
-                color: 0x475569,
-                transparent: true,
-                opacity: 0.7
-            });
-            
+            const furnitureMaterial = new THREE.MeshPhongMaterial({ color: 0x475569, transparent: true, opacity: 0.7 });
+
             const sofa = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.6, 0.8), furnitureMaterial);
             sofa.position.set(2, 0.3, -3);
-            sofa.castShadow = true;
             room.add(sofa);
-            
+
             const table = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.4, 0.6), furnitureMaterial);
             table.position.set(2, 0.2, -2);
-            table.castShadow = true;
             room.add(table);
-            
+
             const bed = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 2.2), furnitureMaterial);
             bed.position.set(-4, 0.25, -1.5);
-            bed.castShadow = true;
             room.add(bed);
-            
+
             const cabinet = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.9, 0.5), furnitureMaterial);
             cabinet.position.set(2, 0.45, 4.5);
-            cabinet.castShadow = true;
             room.add(cabinet);
         }
-        
+
         function createRoomLabel(text, x, y, z) {
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             canvas.width = 256;
             canvas.height = 128;
-            
+
             context.fillStyle = 'rgba(255, 255, 255, 0.95)';
             context.font = 'bold 32px Arial';
             context.textAlign = 'center';
             context.fillText(text, 128, 64);
-            
+
             const texture = new THREE.CanvasTexture(canvas);
-            const material = new THREE.SpriteMaterial({ 
-                map: texture,
-                transparent: true,
-                opacity: 0.9
-            });
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.9 });
             const sprite = new THREE.Sprite(material);
-            
+
             sprite.position.set(x, y + 0.1, z);
             sprite.scale.set(3, 1.5, 1);
             room.add(sprite);
         }
-        
+
         function createDeviceIconElements() {
             const container = document.getElementById('device-icons');
             container.innerHTML = '';
             iconElements = {};
             deviceIcons = [];
-            
+
             const devices = [
-                {
-                    id: 'light',
-                    name: '客厅主灯',
-                    x: 2, y: 3.0, z: -2,
-                    color: 'rgba(234, 179, 8, 0.25)',
-                    iconColor: 'text-yellow-500',
-                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>',
-                    type: 'light',
-                    running: true
-                },
-                {
-                    id: 'ac',
-                    name: '客厅空调',
-                    x: 0, y: 2.8, z: -4,
-                    color: 'rgba(59, 130, 246, 0.25)',
-                    iconColor: 'text-blue-500',
-                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>',
-                    type: 'ac',
-                    running: false
-                },
-                {
-                    id: 'tv',
-                    name: '客厅电视',
-                    x: 2, y: 1.5, z: -4,
-                    color: 'rgba(75, 85, 99, 0.25)',
-                    iconColor: 'text-gray-500',
-                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>',
-                    type: 'tv',
-                    running: false
-                },
-                {
-                    id: 'robot',
-                    name: '扫地机器人',
-                    x: 3, y: 0.2, z: -1,
-                    color: 'rgba(16, 185, 129, 0.25)',
-                    iconColor: 'text-green-500',
-                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>',
-                    type: 'robot',
-                    running: false
-                },
-                {
-                    id: 'bedroom-light',
-                    name: '主卧灯',
-                    x: -4, y: 3.0, z: -1.5,
-                    color: 'rgba(234, 179, 8, 0.25)',
-                    iconColor: 'text-yellow-500',
-                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>',
-                    type: 'light',
-                    running: false
-                },
-                {
-                    id: 'kitchen-light',
-                    name: '厨房灯',
-                    x: 2, y: 3.0, z: 3.5,
-                    color: 'rgba(234, 179, 8, 0.25)',
-                    iconColor: 'text-yellow-500',
-                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>',
-                    type: 'light',
-                    running: false
-                },
-                {
-                    id: 'bathroom-ac',
-                    name: '浴室空调',
-                    x: -4.5, y: 2.8, z: 3.5,
-                    color: 'rgba(59, 130, 246, 0.25)',
-                    iconColor: 'text-blue-500',
-                    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>',
-                    type: 'ac',
-                    running: false
-                }
+                { id: 'light', name: '客厅主灯', x: 2, y: 3.0, z: -2, color: 'rgba(234, 179, 8, 0.25)', activeBg: 'rgba(234, 179, 8, 0.42)', inactiveBg: 'rgba(71,85,105,0.24)', iconColor: 'text-yellow-500', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>', type: 'light', running: true },
+                { id: 'ac', name: '客厅空调', x: 0, y: 2.8, z: -4, color: 'rgba(59, 130, 246, 0.25)', activeBg: 'rgba(59,130,246,0.40)', inactiveBg: 'rgba(71,85,105,0.24)', temperature: 24, iconColor: 'text-blue-500', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>', type: 'ac', running: false },
+                { id: 'tv', name: '客厅电视', x: 2, y: 1.5, z: -4, color: 'rgba(75, 85, 99, 0.25)', activeBg: 'rgba(100,116,139,0.38)', inactiveBg: 'rgba(71,85,105,0.24)', iconColor: 'text-gray-500', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>', type: 'tv', running: false },
+                { id: 'robot', name: '扫地机器人', x: 3, y: 0.2, z: -1, color: 'rgba(16, 185, 129, 0.25)', activeBg: 'rgba(16,185,129,0.40)', inactiveBg: 'rgba(71,85,105,0.24)', iconColor: 'text-green-500', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>', type: 'robot', running: false },
+                { id: 'bedroom-light', name: '主卧灯', x: -4, y: 3.0, z: -1.5, color: 'rgba(234, 179, 8, 0.25)', activeBg: 'rgba(234,179,8,0.42)', inactiveBg: 'rgba(71,85,105,0.24)', iconColor: 'text-yellow-500', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>', type: 'light', running: false },
+                { id: 'kitchen-light', name: '厨房灯', x: 2, y: 3.0, z: 3.5, color: 'rgba(234, 179, 8, 0.25)', activeBg: 'rgba(234,179,8,0.42)', inactiveBg: 'rgba(71,85,105,0.24)', iconColor: 'text-yellow-500', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>', type: 'light', running: false },
+                { id: 'bathroom-ac', name: '浴室空调', x: -4.5, y: 2.8, z: 3.5, color: 'rgba(59, 130, 246, 0.25)', activeBg: 'rgba(59,130,246,0.40)', inactiveBg: 'rgba(71,85,105,0.24)', temperature: 24, iconColor: 'text-blue-500', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>', type: 'ac', running: false }
             ];
-            
+
             devices.forEach(device => {
-                deviceIcons.push({
-                    id: device.id,
-                    position: new THREE.Vector3(device.x, device.y, device.z)
-                });
-                
+                deviceIcons.push({ id: device.id, position: new THREE.Vector3(device.x, device.y, device.z) });
                 devicesData[device.id] = device;
-                
+                if (!iconOffsets[device.id]) {
+                    iconOffsets[device.id] = { x: 0, y: 0 };
+                }
+
                 const iconDiv = document.createElement('div');
                 iconDiv.className = `device-overlay ${device.running ? 'running' : ''} pointer-events-auto`;
                 iconDiv.style.background = device.color;
@@ -1103,40 +1966,112 @@
                 iconDiv.style.display = 'flex';
                 iconDiv.style.alignItems = 'center';
                 iconDiv.style.justifyContent = 'center';
-                iconDiv.onclick = () => openDevicePanel(device.id);
-                
+                iconDiv.dataset.deviceId = device.id;
                 iconDiv.innerHTML = `<svg class="w-8 h-8 ${device.iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">${device.icon}</svg>`;
-                
+
+                bindIconAdvancedEvents(iconDiv, device.id);
+
                 container.appendChild(iconDiv);
                 iconElements[device.id] = iconDiv;
+                applyDeviceIconVisual(device.id);
+            });
+
+            updateDeviceCount();
+        }
+
+        function bindIconAdvancedEvents(iconDiv, deviceId) {
+            iconDiv.addEventListener('pointerdown', (event) => {
+                iconInteractionState.startX = event.clientX;
+                iconInteractionState.startY = event.clientY;
+                iconInteractionState.draggingId = deviceId;
+                iconInteractionState.moved = false;
+
+                iconInteractionState.longPressTimer = setTimeout(() => {
+                    showDeviceDetails(deviceId);
+                    iconInteractionState.longPressTimer = null;
+                }, 550);
+            });
+
+            iconDiv.addEventListener('pointermove', (event) => {
+                if (iconInteractionState.draggingId !== deviceId) return;
+
+                const deltaX = event.clientX - iconInteractionState.startX;
+                const deltaY = event.clientY - iconInteractionState.startY;
+
+                if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
+                    iconInteractionState.moved = true;
+                    if (iconInteractionState.longPressTimer) {
+                        clearTimeout(iconInteractionState.longPressTimer);
+                        iconInteractionState.longPressTimer = null;
+                    }
+
+                    iconOffsets[deviceId].x += deltaX;
+                    iconOffsets[deviceId].y += deltaY;
+                    iconInteractionState.startX = event.clientX;
+                    iconInteractionState.startY = event.clientY;
+                }
+            });
+
+            iconDiv.addEventListener('pointerup', () => {
+                if (iconInteractionState.longPressTimer) {
+                    clearTimeout(iconInteractionState.longPressTimer);
+                    iconInteractionState.longPressTimer = null;
+                }
+
+                if (!iconInteractionState.moved) {
+                    const now = Date.now();
+                    const last = iconInteractionState.lastClick[deviceId] || 0;
+
+                    if (now - last < 300) {
+                        toggleDevicePowerById(deviceId);
+                    } else {
+                        openDevicePanel(deviceId);
+                    }
+
+                    iconInteractionState.lastClick[deviceId] = now;
+                }
+
+                iconInteractionState.draggingId = null;
+                iconInteractionState.moved = false;
             });
         }
-        
+
+        function showDeviceDetails(deviceId) {
+            const device = devicesData[deviceId];
+            if (!device) return;
+
+            const runningHours = device.running ? '3小时25分钟' : '0小时45分钟';
+            const power = device.running ? '2.3kWh' : '0.4kWh';
+            showSceneActivation(`📌 ${device.name}<br>运行时长：${runningHours}<br>当前功耗：${power}<br>型号：Smart-${device.type.toUpperCase()}-2026`);
+        }
+
         function updateDeviceIconsPosition() {
+            if (!room || !camera) return;
             const canvas = document.getElementById('three-canvas');
-            
+
             deviceIcons.forEach(device => {
                 const iconElement = iconElements[device.id];
                 if (!iconElement) return;
-                
+
                 const worldPosition = device.position.clone();
                 worldPosition.applyMatrix4(room.matrixWorld);
-                
+
                 const screenPosition = worldPosition.clone();
                 screenPosition.project(camera);
-                
+
                 const x = (screenPosition.x * 0.5 + 0.5) * canvas.clientWidth;
                 const y = (screenPosition.y * -0.5 + 0.5) * canvas.clientHeight;
-                
+
                 const isInFront = screenPosition.z < 1;
-                
+
                 if (isInFront) {
                     const distance = camera.position.distanceTo(worldPosition);
                     const scale = Math.max(0.5, Math.min(1.2, 15 / distance));
                     const opacity = Math.max(0.3, Math.min(1, 20 / distance));
-                    
-                    iconElement.style.left = `${x - 24}px`;
-                    iconElement.style.top = `${y - 24}px`;
+                    const offset = iconOffsets[device.id] || { x: 0, y: 0 };
+
+                    iconElement.style.left = `${x - 24 + offset.x}px`;
+                    iconElement.style.top = `${y - 24 + offset.y}px`;
                     iconElement.style.transform = `scale(${scale})`;
                     iconElement.style.opacity = opacity;
                     iconElement.style.display = 'flex';
@@ -1147,45 +2082,45 @@
                 }
             });
         }
-        
+
         function setup3DMouseInteractions() {
             const canvas = document.getElementById('three-canvas');
-            
+
             let isDragging = false;
             let previousMousePosition = { x: 0, y: 0 };
             let isMouseDown = false;
-            
-            canvas.addEventListener('mousedown', (e) => {
+
+            canvas.addEventListener('mousedown', () => {
                 isDragging = true;
                 isMouseDown = true;
-                isRotating = false;
+                isRotating = settingsState.autoRotate ? false : isRotating;
             });
-            
+
             canvas.addEventListener('mouseup', () => {
                 isDragging = false;
                 isMouseDown = false;
             });
-            
+
             canvas.addEventListener('mouseleave', () => {
                 isMouseDown = false;
                 isDragging = false;
             });
-            
+
             canvas.addEventListener('mousemove', (e) => {
-                if (isDragging && isMouseDown) {
+                if (isDragging && isMouseDown && !iconInteractionState.draggingId) {
                     const deltaMove = {
                         x: e.offsetX - previousMousePosition.x,
                         y: e.offsetY - previousMousePosition.y
                     };
-                    
+
                     room.rotation.y += deltaMove.x * 0.008;
                     room.rotation.x += deltaMove.y * 0.004;
                     room.rotation.x = Math.max(-Math.PI / 4, Math.min(Math.PI / 4, room.rotation.x));
                 }
-                
+
                 previousMousePosition = { x: e.offsetX, y: e.offsetY };
             });
-            
+
             canvas.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 camera.position.z += e.deltaY * 0.02;
@@ -1193,27 +2128,27 @@
                 camera.position.y = camera.position.z * 0.8;
             });
         }
-        
+
         function on3DWindowResize() {
             const container = document.getElementById('canvas-container');
             camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(container.clientWidth, container.clientHeight);
         }
-        
+
         function animate3D() {
             requestAnimationFrame(animate3D);
-            
+
             if (isRotating && room) {
                 room.rotation.y += 0.002;
             }
-            
+
             if (renderer && scene && camera) {
                 updateDeviceIconsPosition();
                 renderer.render(scene, camera);
             }
         }
-        
+
         function reset3DView() {
             if (room) {
                 room.rotation.x = 0;
@@ -1223,75 +2158,70 @@
                 camera.position.set(0, 20, 20);
             }
         }
-        
+
         function toggle3DAutoRotate() {
             isRotating = !isRotating;
-            const btn = document.getElementById('rotate-btn');
-            if (btn) {
-                btn.textContent = isRotating ? '停止旋转' : '开始旋转';
-            }
+            settingsState.autoRotate = isRotating;
+            const rotateBtn = document.getElementById('rotate-btn');
+            if (rotateBtn) rotateBtn.textContent = isRotating ? '停止旋转' : '开始旋转';
+
+            const check = document.getElementById('setting-autorotate');
+            if (check) check.checked = isRotating;
         }
-        
+
         // 3D设备控制面板
         function openDevicePanel(deviceId) {
             currentDeviceId = deviceId;
             const device = devicesData[deviceId];
-            
             if (!device) return;
-            
+
             document.getElementById('panel-device-name').textContent = device.name;
             document.getElementById('panel-device-status').textContent = device.running ? '运行中' : '待机状态';
-            
+
             const tempControl = document.getElementById('temperature-control');
             const brightnessControl = document.getElementById('brightness-control');
-            
             tempControl.classList.add('hidden');
             brightnessControl.classList.add('hidden');
-            
+
+            if (device.type === 'ac') tempControl.classList.remove('hidden');
+            if (device.type === 'light') brightnessControl.classList.remove('hidden');
+
             if (device.type === 'ac') {
-                tempControl.classList.remove('hidden');
-            } else if (device.type === 'light') {
-                brightnessControl.classList.remove('hidden');
+                const tempValue = Number(device.temperature || 24);
+                document.getElementById('temp-slider').value = String(tempValue);
+                document.getElementById('temp-display').textContent = `${tempValue}°C`;
             }
-            
+
             const powerBtn = document.getElementById('power-btn');
             powerBtn.textContent = device.running ? '关闭' : '开启';
             powerBtn.classList.toggle('bg-blue-600', device.running);
             powerBtn.classList.toggle('bg-slate-700', !device.running);
-            
+
             document.getElementById('device-panel').classList.remove('hidden');
         }
-        
+
         function closeDevicePanel() {
             document.getElementById('device-panel').classList.add('hidden');
             currentDeviceId = null;
         }
-        
+
         function toggleDevicePower() {
             if (!currentDeviceId) return;
-            
-            const device = devicesData[currentDeviceId];
-            device.running = !device.running;
-            
-            document.getElementById('panel-device-status').textContent = device.running ? '运行中' : '待机状态';
-            const powerBtn = document.getElementById('power-btn');
-            powerBtn.textContent = device.running ? '关闭' : '开启';
-            powerBtn.classList.toggle('bg-blue-600', device.running);
-            powerBtn.classList.toggle('bg-slate-700', !device.running);
-            
-            const iconElement = iconElements[currentDeviceId];
-            if (iconElement) {
-                iconElement.classList.toggle('running', device.running);
+            toggleDevicePowerById(currentDeviceId);
+        }
+
+        function updateTemperature(value) {
+            document.getElementById('temp-display').textContent = `${value}°C`;
+            if (currentDeviceId && devicesData[currentDeviceId]) {
+                devicesData[currentDeviceId].temperature = Number(value);
             }
         }
-        
-        function updateTemperature(value) {
-            document.getElementById('temp-display').textContent = value + '°C';
-        }
-        
+
         function updateBrightness(value) {
-            document.getElementById('brightness-display').textContent = value + '%';
+            document.getElementById('brightness-display').textContent = `${value}%`;
         }
+
+        document.addEventListener('DOMContentLoaded', initializeDemo);
     </script>
 </body>
 </html>
