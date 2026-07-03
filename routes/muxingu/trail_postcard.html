@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>千岛湖牧心谷 · 明信片</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC","Hiragino Sans GB",SimHei,sans-serif;
+  background:var(--front-bg);padding:40px;display:flex;flex-direction:column;gap:40px;align-items:center
+}
+:root{--pine:#6d8b5e;--mineral:#5a7a6a;--earth-gold:#c4a87a;--warm-sand:#e8dfd3;--dark:#1a1a1a;--cream:#f5f0e8;--accent:#e07b3c;--front-bg:#0f1117;--front-text:#f5f0e8;--stamp:#d6a84f;--back-bg:#f4efe4;--back-ink:#273128;--route-light:#fff8e5;--route-dark:#171b14;}
+
+/* ===== FRONT: 山野通行证 ===== */
+.front{width:1200px;height:800px;position:relative;overflow:hidden;background:var(--front-bg);color:var(--front-text)}
+.front::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(232,223,211,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(232,223,211,0.045) 1px,transparent 1px);background-size:48px 48px;z-index:0}
+.front .bg-photo{position:absolute;right:48px;top:70px;width:650px;height:610px;background:url('photos/IMG_0152.jpg') center/cover no-repeat;clip-path:polygon(10% 0,100% 0,90% 100%,0 100%);border:1px solid rgba(196,168,122,.55);z-index:4;filter:saturate(.9) contrast(1.08)}
+.front .vignette{position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,18,15,1) 0%,rgba(16,18,15,.92) 42%,rgba(16,18,15,.1) 100%);pointer-events:none;z-index:5}
+
+/* Header bar */
+.front .top-strip{position:absolute;top:0;left:0;right:0;height:8px;background:var(--stamp);z-index:30}
+.front .header{position:absolute;top:28px;left:52px;right:52px;display:flex;justify-content:space-between;align-items:flex-start;z-index:30}
+.front .org-name{font-size:18px;font-weight:900;color:var(--cream);letter-spacing:1px;text-shadow:none;display:flex;align-items:center;gap:10px}
+.front .org-name .icon{width:32px;height:32px;background:var(--stamp);border-radius:0;display:flex;align-items:center;justify-content:center;font-size:14px;transform:none;color:#10120f}
+.front .event-date{text-align:right;color:var(--stamp)}
+.front .event-date .date-main{font-size:28px;font-weight:900;letter-spacing:3px;line-height:1}
+.front .event-date .date-sub{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:4px;margin-top:2px}
+
+/* BIG CHARACTER TITLE - 大字报 */
+.front .title-block{position:absolute;top:112px;left:58px;width:430px;z-index:30}
+.front .title-tag{display:inline-block;font-size:15px;font-weight:900;color:#10120f;letter-spacing:1px;background:var(--stamp);padding:7px 14px;margin-bottom:18px;border-radius:0;transform:none}
+.front .title-main{font-size:96px;font-weight:900;color:var(--stamp);letter-spacing:0;text-shadow:none;line-height:.98}
+.front .title-en{font-size:15px;font-weight:800;color:rgba(245,240,232,.68);letter-spacing:2px;margin-top:18px;margin-left:0;line-height:1.5}
+
+/* Stats - positioned at bottom-left */
+.front .stats-row{position:absolute;bottom:104px;left:58px;width:430px;display:grid;grid-template-columns:repeat(2,1fr);gap:0;z-index:30;border:1px solid rgba(196,168,122,.55)}
+.front .stat-pill{background:rgba(245,240,232,.06);backdrop-filter:none;border-right:1px solid rgba(196,168,122,.35);border-bottom:1px solid rgba(196,168,122,.35);padding:15px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.front .stat-pill:nth-child(2n){border-right:0}
+.front .stat-pill:nth-child(n+3){border-bottom:0}
+.front .stat-pill .val{font-size:28px;font-weight:900;color:var(--cream);line-height:1}
+.front .stat-pill .lbl{font-size:10px;color:rgba(245,240,232,.5);letter-spacing:1px;text-transform:none;font-weight:800}
+
+/* Arrow graffiti elements */
+.front .arrow-graf{position:absolute;z-index:25}
+.front .arrow-graf svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))}
+
+/* Trail canvas - transparent overlay, adaptive line contrast */
+.front .trail-canvas{position:absolute;bottom:58px;right:72px;width:310px;height:230px;z-index:32;pointer-events:none;background:transparent;border:0;padding:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.32))}
+
+/* Bottom bar - no gradient overlay */
+.front .bottom-bar{position:absolute;bottom:0;left:0;right:0;height:70px;z-index:30;display:flex;align-items:flex-end;padding:0 58px 22px;justify-content:space-between;background:transparent}
+.front .bottom-bar .tagline{font-size:16px;font-weight:800;color:var(--stamp);letter-spacing:4px}
+.front .bottom-bar .camping-icons{display:flex;gap:16px;align-items:center}
+.front .bottom-bar .camping-icons svg{opacity:0.6}
+.front .bottom-bar .tagline-en{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2px}
+
+/* Tape collage effect */
+.front .tape{position:absolute;width:60px;height:18px;background:rgba(255,255,255,0.15);z-index:35;transform:rotate(-5deg)}
+
+/* ===== BACK ===== */
+.back{width:1200px;height:800px;background:var(--back-bg);display:flex;position:relative;overflow:hidden;color:var(--back-ink)}
+.back::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(16,18,15,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,18,15,.04) 1px,transparent 1px);background-size:36px 36px;pointer-events:none}
+
+.back .left{width:470px;padding:34px 30px 34px 38px;display:flex;flex-direction:column;border-right:2px solid #181a14;position:relative;height:100%;box-sizing:border-box;overflow:hidden}
+.back .back-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.back .back-logo{width:36px;height:36px;background:#181a14;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--stamp);flex-shrink:0}
+.back .back-title{font-size:22px;font-weight:900;color:var(--back-ink);letter-spacing:0}
+.back .back-subtitle{font-size:10px;color:#5a7a6a;letter-spacing:2px;margin-top:2px;font-weight:800}
+
+.back .section-label{font-size:12px;color:var(--back-ink);letter-spacing:1px;text-transform:none;margin-bottom:10px;font-weight:900;display:flex;align-items:center;gap:6px}
+.back .section-label::before{content:'';width:18px;height:3px;background:var(--stamp)}
+
+.back .elevation-chart{width:100%;height:160px;position:relative;overflow:hidden;margin-bottom:18px;flex-shrink:0}
+.back .elevation-chart canvas{width:100%;height:100%}
+
+.back .summary-section{flex-shrink:0;margin-bottom:16px}
+.back .summary-text{font-size:15px;color:var(--back-ink);line-height:1.85}
+.back .summary-text strong{color:var(--mineral);font-weight:700}
+
+/* Bottom-left compass/nature decoration */
+/* Graffiti zone - fills remaining left space on back */
+.back .graffiti-zone{flex:1;min-height:0;margin-top:14px;z-index:5}
+.graffiti-box{width:100%;height:100%;border:2px solid #181a14;border-radius:0;display:flex;align-items:flex-start;justify-content:flex-start;background:rgba(196,168,122,0.08);position:relative}
+.graffiti-prompt{font-size:12px;color:#5a7a6a;opacity:.8;letter-spacing:0;font-style:normal;font-weight:800;position:absolute;top:12px;left:14px}
+
+/* Right: writing area */
+.back .right{flex:1;padding:34px 40px 34px 32px;display:flex;flex-direction:column}
+
+.back .stamp-box{width:104px;height:126px;border:2px solid #181a14;border-radius:0;align-self:flex-end;margin-bottom:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--back-ink);font-size:14px;letter-spacing:0;font-weight:900;background:rgba(196,168,122,0.12)}
+
+.back .to-section{margin-bottom:8px}
+.back .to-line{border-bottom:2px solid #181a14;height:42px;display:flex;align-items:flex-end;padding-bottom:6px}
+.back .to-label{font-size:14px;color:var(--back-ink);letter-spacing:1px;font-weight:900}
+
+.back .message-area{flex:1;display:flex;flex-direction:column;margin-top:4px}
+.back .message-label{font-size:12px;color:var(--back-ink);letter-spacing:1px;margin-bottom:10px;font-weight:900}
+.back .message-lines{display:flex;flex-direction:column;gap:15px;flex:1}
+.back .message-line{border-bottom:1px solid rgba(24,26,20,.42);height:20px}
+
+.back .back-footer{margin-top:auto;padding-top:14px;border-top:2px solid #181a14;display:flex;justify-content:space-between;align-items:center}
+.back .back-footer-text{font-size:10px;color:#5a7a6a;letter-spacing:2px;font-weight:800}
+.back .back-footer .org-tag{font-size:10px;color:var(--back-ink);font-weight:900;letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<!-- ====== FRONT: 大字报潮流户外海报 ====== -->
+<div class="front">
+  <div class="bg-photo"></div>
+  <div class="vignette"></div>
+  <div class="top-strip"></div>
+
+  <!-- Tape collage marks -->
+  <div class="tape" style="top:16px;left:250px;transform:rotate(-7deg)"></div>
+  <div class="tape" style="top:16px;right:180px;transform:rotate(3deg)"></div>
+
+  <div class="header">
+    <div class="org-name">
+      <div class="icon">⛰️</div>
+      蜗牛山野
+    </div>
+    <div class="event-date">
+      <div class="date-main">2026.06.19</div>
+      <div class="date-sub">FRIDAY</div>
+    </div>
+  </div>
+
+  <div class="title-block">
+    <div class="title-tag">淳安</div>
+    <div class="title-main">千岛湖牧心谷</div>
+    <div class="title-en">千岛湖牧心谷 ARCHIVE</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-pill"><span class="val">10.58</span><span class="lbl">公里 KM</span></div>
+    <div class="stat-pill"><span class="val">180</span><span class="lbl">爬升 M ↑</span></div>
+    <div class="stat-pill"><span class="val">304</span><span class="lbl">最高 M ▲</span></div>
+    <div class="stat-pill"><span class="val">5小时6分</span><span class="lbl">耗时 TIME</span></div>
+  </div>
+
+  <!-- Arrow graffiti: dynamic trail direction hints -->
+  <div class="arrow-graf" style="top:365px;left:340px">
+    <svg width="80" height="24" viewBox="0 0 80 24"><path d="M0 12h65M55 4l12 8-12 8" stroke="#c4a87a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="arrow-graf" style="top:480px;left:420px">
+    <svg width="60" height="20" viewBox="0 0 60 20"><path d="M0 10h48M38 3l10 7-10 7" stroke="#c4a87a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/></svg>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="tagline-en">千岛湖牧心谷 ARCHIVE</div>
+    <div class="camping-icons">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M12 2L2 20h20L12 2z"/><path d="M12 20V10"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
+    </div>
+  </div>
+
+  <canvas id="frontCanvas" class="trail-canvas" width="960" height="720"></canvas>
+</div>
+
+<!-- ====== BACK ====== -->
+<div class="back">
+  <div class="left">
+    <div class="back-header">
+      <div class="back-logo">⛰️</div>
+      <div>
+        <div class="back-title">千岛湖牧心谷</div>
+        <div class="back-subtitle">千岛湖牧心谷 ARCHIVE</div>
+      </div>
+    </div>
+
+    <div class="section-label">海拔剖面 ELEVATION</div>
+    <div class="elevation-chart">
+      <canvas id="backElevation"></canvas>
+    </div>
+
+    <div class="summary-section">
+      <div class="section-label">路线记录 NOTES</div>
+      <div class="summary-text">
+        全程<strong>10.58公里</strong>，爬升<strong>180米</strong>，最高<strong>304米</strong>，耗时<strong>5小时6分</strong>。
+      </div>
+    </div>
+
+    <!-- Bottom-left: graffiti zone -->
+    <div class="graffiti-zone">
+      <div class="graffiti-box">
+        <span class="graffiti-prompt">在这里画下你的记忆吧</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="stamp-box">
+      <div>邮票</div>
+      <div style="font-size:7px;margin-top:4px;opacity:0.5">STAMP</div>
+    </div>
+
+    <div class="to-section">
+      <div class="to-line"><span class="to-label">TO:</span></div>
+    </div>
+
+    <div class="message-area">
+      <div class="message-label">MESSAGE</div>
+      <div class="message-lines">
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+      </div>
+    </div>
+
+    <div class="back-footer">
+      <span class="back-footer-text">蜗牛山野</span>
+      <span class="org-tag">蜗牛山野</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const TRAIL_MAP=[[29.591824,119.021989],[29.591679,119.021668],[29.591599,119.021487],[29.591504,119.021316],[29.591415,119.021137],[29.591337,119.02096],[29.591229,119.020794],[29.591147,119.020595],[29.591081,119.020442],[29.590981,119.020302],[29.590909,119.020106],[29.59088,119.01982],[29.59087,119.019598],[29.590849,119.019396],[29.590742,119.0192],[29.590685,119.019048],[29.590593,119.018872],[29.5905,119.018655],[29.590391,119.018508],[29.590292,119.01835],[29.590178,119.018143],[29.590112,119.017958],[29.589998,119.017768],[29.589883,119.017587],[29.589757,119.017378],[29.589557,119.017336],[29.589331,119.017309],[29.58908,119.017341],[29.588867,119.017431],[29.588731,119.017547],[29.588551,119.017597],[29.588384,119.017648],[29.588172,119.017699],[29.587965,119.017774],[29.587792,119.0178],[29.587612,119.017883],[29.587512,119.017543],[29.58749,119.017311],[29.587512,119.017104],[29.587433,119.016939],[29.587427,119.016743],[29.587359,119.016551],[29.587319,119.016345],[29.587326,119.016133],[29.587258,119.015942],[29.587174,119.015769],[29.587146,119.015568],[29.587086,119.015518],[29.586989,119.015357],[29.587035,119.01524],[29.587014,119.015103],[29.587091,119.014868],[29.587007,119.014798],[29.586944,119.014642],[29.586843,119.014629],[29.586763,119.014783],[29.58666,119.01483],[29.586627,119.014708],[29.586563,119.014561],[29.586464,119.01436],[29.586327,119.01417],[29.586123,119.014035],[29.58606,119.013872],[29.585982,119.013739],[29.585892,119.013548],[29.585925,119.013486],[29.585834,119.013472],[29.585688,119.013223],[29.585576,119.01303],[29.585565,119.012844],[29.585557,119.012524],[29.585479,119.012377],[29.585386,119.01222],[29.58525,119.011901],[29.585231,119.011716],[29.585195,119.011522],[29.58517,119.011361],[29.585093,119.011192],[29.58504,119.011041],[29.584894,119.01087],[29.584761,119.010806],[29.584656,119.010685],[29.584241,119.010196],[29.584589,119.009755],[29.58478,119.00945],[29.584815,119.009176],[29.584747,119.008891],[29.584631,119.008671],[29.584359,119.00833],[29.584274,119.008059],[29.584144,119.007827],[29.583988,119.007696],[29.583817,119.007484],[29.583736,119.007331],[29.583667,119.007112],[29.583686,119.006827],[29.583804,119.006661],[29.583949,119.006574],[29.584135,119.006505],[29.58419,119.006551],[29.584158,119.006422],[29.584347,119.00632],[29.584492,119.006125],[29.584558,119.005945],[29.584596,119.005771],[29.584613,119.005612],[29.584704,119.005363],[29.584712,119.005138],[29.584679,119.004932],[29.584619,119.004749],[29.584487,119.004611],[29.584291,119.004518],[29.584127,119.004339],[29.584028,119.004098],[29.58386,119.003893],[29.583602,119.003756],[29.583302,119.003336],[29.58323,119.003028],[29.58315,119.002804],[29.582997,119.002632],[29.582873,119.002435],[29.582585,119.002066],[29.582192,119.001995],[29.582038,119.001662],[29.582038,119.001393],[29.582119,119.001267],[29.582287,119.001145],[29.582508,119.00071],[29.582531,119.000653],[29.582664,119.00045],[29.582694,119.000229],[29.58266,118.999832],[29.582536,118.99962],[29.582498,118.999264],[29.582205,118.999409],[29.581859,118.999197],[29.581648,118.999018],[29.581528,118.998774],[29.581301,118.99865],[29.581011,118.998684],[29.581025,118.998876],[29.580468,118.99885],[29.580233,118.9987],[29.580071,118.998531],[29.579802,118.998484],[29.579597,118.998427],[29.579364,118.998332],[29.579195,118.998194],[29.579028,118.998011],[29.578816,118.997911],[29.578606,118.997969],[29.578284,118.997999],[29.578043,118.998063],[29.577743,118.998155],[29.577515,118.998184],[29.577298,118.998103],[29.577118,118.997969],[29.576919,118.997862],[29.576696,118.99788],[29.576466,118.997851],[29.576266,118.997884],[29.576047,118.997936],[29.575822,118.997888],[29.575539,118.99785],[29.575273,118.997712],[29.575046,118.997736],[29.574889,118.997708],[29.574707,118.997683],[29.574553,118.99765],[29.574391,118.9976],[29.574164,118.997587],[29.573888,118.997515],[29.573666,118.997553],[29.573318,118.997679],[29.573096,118.998164],[29.572756,118.998393],[29.572575,118.998685],[29.572302,118.998722],[29.572075,118.998986],[29.571875,118.999084],[29.571814,118.999319],[29.571777,118.999317],[29.571549,118.999639],[29.571396,118.999799],[29.571247,119.000072],[29.571441,119.000349],[29.571105,119.000457],[29.571101,119.000764],[29.570981,119.001071],[29.57107,119.001356],[29.571166,119.001577],[29.571351,119.001812],[29.571528,119.002013],[29.571684,119.002214],[29.5719,119.002332],[29.572108,119.002291],[29.572274,119.002238],[29.572458,119.002151],[29.572652,119.00223],[29.572828,119.002389],[29.573025,119.002334],[29.573053,119.002113],[29.573226,119.001933],[29.573403,119.00188],[29.573592,119.001914],[29.573766,119.001745],[29.573824,119.001519],[29.573954,119.001418],[29.574155,119.001496],[29.574338,119.001791],[29.574472,119.001979],[29.574497,119.002139],[29.574414,119.002408],[29.574404,119.00269],[29.574341,119.002463],[29.57435,119.002547],[29.574462,119.002557],[29.574542,119.002778],[29.57451,119.003009],[29.574648,119.003283],[29.574767,119.00361],[29.575022,119.003926],[29.575278,119.004178],[29.575495,119.004344],[29.575644,119.004534],[29.575701,119.004817],[29.575679,119.005102],[29.575573,119.005341],[29.575723,119.005507],[29.576009,119.005474],[29.576227,119.005564],[29.57654,119.005727],[29.576814,119.00591],[29.577149,119.006035],[29.577442,119.006269],[29.577683,119.0066],[29.577923,119.006874],[29.578367,119.007053],[29.578425,119.007527],[29.5785,119.007845],[29.578885,119.007938],[29.579104,119.0084],[29.579196,119.008932],[29.579295,119.009221],[29.579594,119.009473],[29.579715,119.009558],[29.579655,119.01032],[29.579793,119.01079],[29.580068,119.01113],[29.580267,119.011411],[29.580279,119.01173],[29.58047,119.011935],[29.580699,119.012254],[29.580857,119.012536],[29.581058,119.012786],[29.581296,119.013127],[29.581302,119.013494],[29.581401,119.013801],[29.581459,119.014039],[29.581575,119.014255],[29.5818,119.014434],[29.581919,119.014663],[29.581984,119.015241],[29.581647,119.015989],[29.581469,119.016439],[29.581227,119.017204],[29.581137,119.017566],[29.581431,119.017985],[29.581624,119.01819],[29.58206,119.018169],[29.58251,119.018138],[29.582816,119.01844],[29.582667,119.018574],[29.582966,119.018825],[29.583131,119.019117],[29.583273,119.019368],[29.583326,119.019864],[29.583361,119.02017],[29.583323,119.020169],[29.583469,119.020846],[29.583263,119.020673],[29.583191,119.020557],[29.583354,119.020814],[29.58359,119.020726],[29.583779,119.020815],[29.584015,119.021048],[29.584053,119.021236],[29.584306,119.021203],[29.584361,119.021403],[29.584347,119.021639],[29.584475,119.021839],[29.585391,119.020121],[29.585432,119.019518],[29.586375,119.018993],[29.586789,119.018572],[29.587276,119.018545],[29.587452,119.018293],[29.587624,119.018104],[29.587789,119.017855],[29.587971,119.017748],[29.588136,119.017624],[29.588328,119.017489],[29.58863,119.017372],[29.588908,119.017453],[29.589111,119.017407],[29.589207,119.017176],[29.589436,119.017186],[29.589644,119.017277],[29.589828,119.017433],[29.590041,119.017608],[29.59019,119.017795],[29.590267,119.017998],[29.590296,119.018203],[29.590439,119.018402],[29.590601,119.018582],[29.590687,119.018777],[29.590759,119.018964],[29.590902,119.019139],[29.590932,119.019386],[29.590914,119.019711],[29.590927,119.019988],[29.59104,119.02026],[29.591201,119.020567],[29.591304,119.020784],[29.59145,119.020974],[29.591579,119.021157],[29.591643,119.021323]];
+const PROFILE=[[0,174],[49,172],[80,169],[113,166],[146,167],[175,170],[206,170],[247,169],[281,165],[313,164],[344,164],[380,163],[412,164],[446,164],[482,164],[519,167],[561,169],[605,179],[639,187],[672,187],[710,184],[746,176],[793,176],[832,177],[862,176],[893,176],[928,176],[962,175],[995,174],[1043,176],[1076,184],[1118,187],[1152,197],[1192,209],[1219,218],[1240,222],[1265,227],[1317,244],[1365,260],[1399,268],[1464,273],[1522,274],[1568,281],[1611,277],[1642,270],[1686,267],[1716,265],[1745,261],[1772,262],[1808,269],[1846,282],[1953,304],[2012,292],[2060,286],[2129,283],[2172,285],[2214,288],[2252,297],[2292,293],[2331,280],[2371,266],[2414,256],[2463,257],[2505,247],[2532,245],[2566,245],[2600,246],[2633,250],[2668,251],[2705,254],[2754,268],[2812,272],[2910,285],[2948,287],[2992,289],[3075,300],[3140,299],[3195,287],[3267,270],[3338,260],[3379,248],[3438,230],[3494,219],[3588,217],[3647,211],[3694,207],[3744,199],[3827,190],[3876,177],[3921,174],[3962,171],[4004,167],[4046,165],[4098,161],[4148,158],[4195,154],[4234,151],[4274,146],[4318,141],[4356,141],[4408,139],[4461,136],[4498,133],[4530,130],[4560,129],[4606,129],[4653,128],[4729,128],[4814,133],[4885,138],[4934,133],[4971,130],[5035,130],[5081,127],[5134,130],[5222,138],[5278,139],[5322,139],[5371,137],[5417,133],[5457,127],[5491,129],[5528,129],[5568,132],[5609,136],[5645,138],[5682,132],[5721,128],[5758,126],[5809,130],[5861,126],[5912,125],[5991,128],[6056,127],[6113,131],[6190,127],[6255,125],[6317,127],[6362,132],[6406,139],[6447,135],[6497,137],[6557,137],[6622,142],[6692,151],[6761,154],[6845,152],[6925,157],[7031,161],[7118,161],[7177,161],[7280,160],[7389,174],[7458,172],[7510,165],[7569,165],[7620,170],[7688,172],[7746,175],[7785,177],[7833,180],[7892,185],[8013,195],[8153,211],[8248,222],[8337,247],[8409,237],[8485,223],[8553,201],[8630,172],[8706,171],[8794,176],[8890,176],[8943,179],[9000,176],[9047,170],[9126,162],[9171,154],[9206,149],[9446,148],[9592,161],[9734,179],[9794,181],[9843,179],[9887,178],[9925,174],[9980,182],[10028,189],[10068,187],[10108,178],[10154,172],[10193,167],[10227,161],[10268,161],[10304,160],[10340,160],[10379,162],[10429,164],[10479,169],[10525,170],[10563,171],[10581,171]];
+
+const PINE='#6d8b5e';const MINERAL='#5a7a6a';const EARTH_GOLD='#c4a87a';
+const ACCENT='#e07b3c';
+
+// ===== FRONT: GPX-based 2D Trail Map (flat style) =====
+(function(){
+  const c=document.getElementById('frontCanvas');
+  const ctx=c.getContext('2d');
+  const W=480,H=360,dpr=2;
+  c.width=W*dpr;c.height=H*dpr;ctx.scale(dpr,dpr);
+
+  // Trail area with padding
+  const padL=20,padR=20,padT=20,padB=20;
+  const pw=W-padL-padR;
+  const ph=H-padT-padB;
+
+  // Compute bounds from TRAIL_MAP
+  let minLat=90,maxLat=-90,minLon=180,maxLon=-180;
+  TRAIL_MAP.forEach(p=>{
+    if(p[0]<minLat)minLat=p[0];
+    if(p[0]>maxLat)maxLat=p[0];
+    if(p[1]<minLon)minLon=p[1];
+    if(p[1]>maxLon)maxLon=p[1];
+  });
+  const latR=maxLat-minLat;
+  const lonR=maxLon-minLon;
+
+  const mapX=lon=>padL+((lon-minLon)/lonR)*pw;
+  const mapY=lat=>padT+ph-((lat-minLat)/latR)*ph;
+
+  function sampleBrightness(){
+    const photo=document.querySelector('.front .bg-photo');
+    if(!photo)return 90;
+    const url=getComputedStyle(photo).backgroundImage.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
+    const img=new Image();
+    img.src=url;
+    return new Promise(resolve=>{
+      img.onload=()=>{
+        try{
+          const sample=document.createElement('canvas');
+          sample.width=42;sample.height=42;
+          const sctx=sample.getContext('2d',{willReadFrequently:true});
+          sctx.drawImage(img,img.naturalWidth*.56,img.naturalHeight*.56,img.naturalWidth*.34,img.naturalHeight*.34,0,0,42,42);
+          const data=sctx.getImageData(0,0,42,42).data;
+          let total=0;
+          for(let i=0;i<data.length;i+=4){total+=0.2126*data[i]+0.7152*data[i+1]+0.0722*data[i+2];}
+          resolve(total/(data.length/4));
+        }catch(e){resolve(90);}
+      };
+      img.onerror=()=>resolve(90);
+    });
+  }
+
+  function drawPath(strokeStyle,lineWidth){
+    ctx.save();
+    ctx.strokeStyle=strokeStyle;
+    ctx.lineWidth=lineWidth;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.beginPath();
+    TRAIL_MAP.forEach((p,i)=>{
+      const x=mapX(p[1]),y=mapY(p[0]);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();ctx.restore();
+  }
+
+  sampleBrightness().then(avg=>{
+  const onLight=avg>138;
+  const halo=onLight?'rgba(255,250,240,0.78)':'rgba(10,14,10,0.74)';
+  const line=onLight?'rgba(22,38,25,0.94)':'rgba(255,250,240,0.94)';
+  const label=onLight?'rgba(22,38,25,0.92)':'rgba(255,250,240,0.94)';
+
+  drawPath(halo,8);
+  drawPath(line,3.6);
+
+  // Three markers only: start, peak, end
+  const MARKERS=[
+    {frac:0.0, label:'起点', color:'#6d8b5e'},
+    {frac:0.58, label:'PEAK', color:'#e07b3c'},
+    {frac:1.0, label:'终点', color:'#5a7a6a'}
+  ];
+
+  MARKERS.forEach(mk=>{
+    const idx=Math.min(TRAIL_MAP.length-1,Math.floor(mk.frac*(TRAIL_MAP.length-1)));
+    const p=TRAIL_MAP[idx];
+    const x=mapX(p[1]),y=mapY(p[0]);
+
+    ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);
+    ctx.fillStyle=halo;ctx.fill();
+
+    ctx.beginPath();ctx.arc(x,y,4.6,0,Math.PI*2);
+    ctx.fillStyle=mk.color;ctx.fill();
+    ctx.strokeStyle=line;ctx.lineWidth=1.5;ctx.stroke();
+
+    ctx.fillStyle=label;ctx.font='bold 11px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.textAlign='center';
+    ctx.shadowColor=onLight?'rgba(255,250,240,0.78)':'rgba(0,0,0,0.72)';
+    ctx.shadowBlur=3;
+    ctx.fillText(mk.label,x,y-16);
+    ctx.shadowBlur=0;
+    ctx.textAlign='left';
+  });
+  });
+})();
+
+// ===== BACK: Elevation Profile (minimal) =====
+(function(){
+  const c=document.getElementById('backElevation');
+  const ctx=c.getContext('2d');
+  const container=document.querySelector('.elevation-chart');
+  const W=container.clientWidth,H=container.clientHeight;
+  if(W===0||H===0){setTimeout(arguments.callee,100);return;}
+  const dpr=2;
+  c.width=W*dpr;c.height=H*dpr;ctx.scale(dpr,dpr);
+
+  const maxY=1200;
+  const pad={t:10,b:10,l:10,r:10};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+
+  // Fill under curve (subtle)
+  ctx.beginPath();
+  ctx.moveTo(pad.l,H-pad.b);
+  PROFILE.forEach(pt=>{
+    ctx.lineTo(pad.l+(pt[0]/17415)*cw, pad.t+ch-(pt[1]/maxY)*ch);
+  });
+  ctx.lineTo(W-pad.r,H-pad.b);ctx.closePath();
+  ctx.fillStyle='rgba(90,122,106,0.15)';ctx.fill();
+
+  // Line only
+  ctx.beginPath();
+  PROFILE.forEach((pt,i)=>{
+    const x=pad.l+(pt[0]/17415)*cw;
+    const y=pad.t+ch-(pt[1]/maxY)*ch;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#5a7a6a';ctx.lineWidth=2;ctx.stroke();
+
+  // Peak marker only
+  const peakValue=Math.max(...PROFILE.map(pt=>pt[1]));
+  const peakPt=PROFILE.find(pt=>pt[1]===peakValue);
+  if(peakPt){
+    const px=pad.l+(peakPt[0]/17415)*cw;
+    const py=pad.t+ch-(peakPt[1]/maxY)*ch;
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle='#e07b3c';ctx.fill();
+    ctx.fillStyle='#e07b3c';ctx.font='bold 10px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.fillText(`▲ ${peakValue}m`,px+10,py-6);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>山野路迹 · 社交组图预览</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #f6f0df;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Hiragino Sans GB", SimHei, "Arial Unicode MS", sans-serif;
+  color: #151711;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(rgba(21,23,17,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21,23,17,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.header {
+  max-width: 3252px; margin: 0 auto;
+  padding: 44px 20px 18px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  border-bottom: 2px solid rgba(21,23,17,0.16);
+}
+.header h1 {
+  font-size: 42px; font-weight: 900;
+  color: #151711;
+  letter-spacing: 0;
+}
+.header p {
+  max-width: 720px;
+  font-size: 15px; color: rgba(21,23,17,0.68);
+  margin-top: 8px; letter-spacing: 0; text-align: right;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 540px);
+  gap: 12px;
+  max-width: 1664px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.grid-item {
+  position: relative;
+  width: 540px;
+  height: 540px;
+  overflow: hidden;
+}
+.grid-item iframe {
+  position: absolute; top: 0; left: 0;
+  width: 1080px; height: 1080px;
+  border: none;
+  transform-origin: top left;
+  transform: scale(0.5);
+}
+.footer {
+  text-align: center; padding: 20px;
+  font-size: 12px; color: rgba(21,23,17,0.55); letter-spacing: 0;
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>淳安 · 千岛湖牧心谷</h1>
+  <p>千岛湖牧心谷九宫格：10.58km / 5H06M</p>
+</div>
+<div class="grid"><div class="grid-item"><iframe src="social_card_01.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_02.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_03.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_04.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_05.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_06.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_07.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_08.html" frameborder="0" scrolling="no"></iframe></div>
+<div class="grid-item"><iframe src="social_card_09.html" frameborder="0" scrolling="no"></iframe></div>
+</div>
+<div class="footer">蜗牛山野 · 小红书社交组图 · #淳安 #千岛湖 #徒步 #蜗牛山野 #户外记录 #千岛湖牧心谷</div>
+</body>
+</html>

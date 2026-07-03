@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>山野路迹 · 千岛湖牧心谷</title>
+  <link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+  <div class="route-shell">
+    <aside class="sidebar" aria-label="案例导航">
+      <a class="back-link" href="../../">返回路线选择</a>
+      <header class="route-title">
+        <div class="eyebrow">ROUTE CASE</div>
+        <h1>千岛湖<br>牧心谷</h1>
+        <p class="lead">轻松、狼狈但开心。这里集中展示这条路线生成的网页、平面文创和冰箱贴 STL 模型。</p>
+      </header>
+
+      <div class="stats" aria-label="路线数据">
+        <div class="stat"><b>10.58</b><span>公里</span></div>
+        <div class="stat"><b>180</b><span>海拔跨度 m</span></div>
+        <div class="stat"><b>5h06m</b><span>用时</span></div>
+      </div>
+
+      <nav class="filters" aria-label="筛选案例类型">
+        <button class="filter is-active" type="button" data-filter="all">全部</button>
+        <button class="filter" type="button" data-filter="web3d">3D / 模型</button>
+        <button class="filter" type="button" data-filter="print">平面文创</button>
+        <button class="filter" type="button" data-filter="social">小红书</button>
+        <button class="filter" type="button" data-filter="article">长图</button>
+      </nav>
+
+      <div class="case-list" id="caseList" aria-label="案例列表"></div>
+    </aside>
+
+    <main class="stage">
+      <section class="toolbar" aria-label="当前案例操作">
+        <div class="current">
+          <h2 id="caseTitle">3D 路迹小报</h2>
+          <p id="caseDesc">带地形浮雕、照片节点和路线数据的网页端 3D 展示。</p>
+        </div>
+        <div class="actions">
+          <a class="action" id="shotLink" href="#" target="_blank" rel="noreferrer">截图预览</a>
+          <a class="action primary" id="openLink" href="trail_poster.html" target="_blank" rel="noreferrer">打开原始 HTML</a>
+        </div>
+      </section>
+
+      <section class="preview-shell" aria-label="案例预览窗口">
+        <div class="preview-topbar">
+          <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <span id="casePath">routes/muxingu/trail_poster.html</span>
+        </div>
+        <div class="viewport" id="viewport">
+          <div class="frame-wrap" id="frameWrap">
+            <iframe id="caseFrame" title="当前案例预览" src="trail_poster.html"></iframe>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { mountSTLViewer, unmountSTLViewer } from "../../assets/stl-viewer.js";
+
+    const cases = [
+      {
+        title: "3D 路迹小报",
+        desc: "带地形浮雕、照片节点和路线数据的网页端 3D 展示。",
+        category: "web3d",
+        html: "trail_poster.html",
+        png: "trail_poster.png",
+        size: [1400, 1000],
+        thumb: "trail_poster.png"
+      },
+      {
+        title: "路线明信片",
+        desc: "适合打印和分享的路线纪念卡片。",
+        category: "print",
+        html: "trail_postcard.html",
+        png: "trail_postcard.png",
+        size: [1280, 880],
+        thumb: "trail_postcard.png"
+      },
+      {
+        title: "公众号长图",
+        desc: "按长文阅读节奏组织的路线复盘图文。",
+        category: "article",
+        html: "trail_wechat.html",
+        png: "trail_wechat.png",
+        size: [1080, 8500],
+        thumb: "trail_wechat.png"
+      },
+      {
+        title: "小红书九宫格总览",
+        desc: "九张真实记录卡片的整体预览。",
+        category: "social",
+        html: "social_grid_preview.html",
+        png: "social_card_01.png",
+        size: [3240, 3240],
+        thumb: "social_card_01.png"
+      },
+      ...Array.from({ length: 9 }, (_, i) => {
+        const n = String(i + 1).padStart(2, "0");
+        const names = ["封面钩子", "路线小票", "开始进山", "过程上强度", "喘气时刻", "回望来路", "开阔时刻", "最高点", "收队复盘"];
+        return {
+          title: `小红书单图 ${n} · ${names[i]}`,
+          desc: "1080×1080 可分享卡片。",
+          category: "social",
+          html: `social_card_${n}.html`,
+          png: `social_card_${n}.png`,
+          size: [1080, 1080],
+          thumb: `social_card_${n}.png`
+        };
+      }),
+      {
+        title: "冰箱贴 STL 模型",
+        desc: "六边形地形浮雕冰箱贴，可拖拽旋转查看。",
+        category: "web3d",
+        model: "models/magnet_3d_hexagon_muxingu.stl",
+        obj: "models/magnet_3d_hexagon_muxingu.obj",
+        size: [1400, 1000],
+        thumb: "magnet_3d_preview.png"
+      }
+    ];
+
+    const caseList = document.querySelector("#caseList");
+    const frameWrap = document.querySelector("#frameWrap");
+    const viewport = document.querySelector("#viewport");
+    const caseTitle = document.querySelector("#caseTitle");
+    const caseDesc = document.querySelector("#caseDesc");
+    const casePath = document.querySelector("#casePath");
+    const openLink = document.querySelector("#openLink");
+    const shotLink = document.querySelector("#shotLink");
+    const filters = [...document.querySelectorAll(".filter")];
+    let activeIndex = 0;
+    let activeFilter = "all";
+
+    function caseKey(item) {
+      if (item.model) return "stl";
+      return item.html.replace(".html", "");
+    }
+
+    function renderList() {
+      caseList.innerHTML = "";
+      cases.forEach((item, index) => {
+        if (activeFilter !== "all" && item.category !== activeFilter) return;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `case-button${index === activeIndex ? " is-active" : ""}`;
+        button.dataset.key = caseKey(item);
+        button.innerHTML = `
+          <img class="thumb" src="${item.thumb}" alt="">
+          <span class="case-meta">
+            <strong>${item.title}</strong>
+            <span>${item.model ? "STL · interactive" : `${item.size[0]}×${item.size[1]} · ${item.category}`}</span>
+          </span>
+        `;
+        button.addEventListener("click", () => selectCase(index));
+        caseList.appendChild(button);
+      });
+    }
+
+    function fitFrame(item) {
+      const padding = 44;
+      const availableWidth = Math.max(320, viewport.clientWidth - padding);
+      const availableHeight = Math.max(420, viewport.clientHeight - padding);
+      const scale = Math.min(1, availableWidth / item.size[0], availableHeight / Math.min(item.size[1], 1600));
+      frameWrap.style.width = `${item.size[0] * scale}px`;
+      frameWrap.style.height = `${item.size[1] * scale}px`;
+      const activeFrame = frameWrap.querySelector("iframe");
+      if (activeFrame) {
+        activeFrame.style.width = `${item.size[0]}px`;
+        activeFrame.style.height = `${item.size[1]}px`;
+        activeFrame.style.transform = `scale(${scale})`;
+      }
+    }
+
+    function setFrameContent(item) {
+      const existingPanel = frameWrap.querySelector(".stl-panel");
+      if (existingPanel) unmountSTLViewer(existingPanel);
+      frameWrap.innerHTML = "";
+      if (item.model) {
+        const panel = document.createElement("div");
+        panel.className = "stl-panel";
+        frameWrap.appendChild(panel);
+        mountSTLViewer(panel, {
+          src: item.model,
+          label: "千岛湖牧心谷 · 冰箱贴 STL",
+          color: 0xd8c39c
+        });
+      } else {
+        const iframe = document.createElement("iframe");
+        iframe.id = "caseFrame";
+        iframe.title = "当前案例预览";
+        iframe.src = item.html;
+        frameWrap.appendChild(iframe);
+      }
+    }
+
+    function selectCase(index, updateHash = true) {
+      activeIndex = index;
+      const item = cases[index];
+      caseTitle.textContent = item.title;
+      caseDesc.textContent = item.desc;
+      casePath.textContent = item.model ? `routes/muxingu/${item.model}` : `routes/muxingu/${item.html}`;
+      openLink.href = item.model ? item.model : item.html;
+      openLink.textContent = item.model ? "下载 STL" : "打开原始 HTML";
+      shotLink.href = item.obj || item.png || "#";
+      shotLink.textContent = item.obj ? "下载 OBJ" : "截图预览";
+      shotLink.style.display = item.obj || item.png ? "inline-flex" : "none";
+      setFrameContent(item);
+      fitFrame(item);
+      renderList();
+      if (updateHash) {
+        history.replaceState(null, "", `#${caseKey(item)}`);
+      }
+    }
+
+    filters.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filters.forEach((item) => item.classList.toggle("is-active", item === button));
+        const visibleIndex = cases.findIndex((item) => activeFilter === "all" || item.category === activeFilter);
+        selectCase(visibleIndex >= 0 ? visibleIndex : 0);
+      });
+    });
+
+    window.addEventListener("resize", () => fitFrame(cases[activeIndex]));
+    renderList();
+    const initialKey = decodeURIComponent(location.hash.slice(1));
+    const initialIndex = cases.findIndex((item) => caseKey(item) === initialKey);
+    selectCase(initialIndex >= 0 ? initialIndex : 0, false);
+  </script>
+</body>
+</html>

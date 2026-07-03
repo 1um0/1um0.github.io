@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>雁荡三尖 · 明信片</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC","Hiragino Sans GB",SimHei,sans-serif;
+  background:var(--front-bg);padding:40px;display:flex;flex-direction:column;gap:40px;align-items:center
+}
+:root{--pine:#6d8b5e;--mineral:#5a7a6a;--earth-gold:#c4a87a;--warm-sand:#e8dfd3;--dark:#1a1a1a;--cream:#f5f0e8;--accent:#e07b3c;--front-bg:#0f1117;--front-text:#f5f0e8;--stamp:#d6a84f;--back-bg:#f4efe4;--back-ink:#273128;--route-light:#fff8e5;--route-dark:#171b14;}
+
+/* ===== FRONT: 山野通行证 ===== */
+.front{width:1200px;height:800px;position:relative;overflow:hidden;background:var(--front-bg);color:var(--front-text)}
+.front::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(232,223,211,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(232,223,211,0.045) 1px,transparent 1px);background-size:48px 48px;z-index:0}
+.front .bg-photo{position:absolute;right:48px;top:70px;width:650px;height:610px;background:url('photos/625_livephoto.jpg') center/cover no-repeat;clip-path:polygon(10% 0,100% 0,90% 100%,0 100%);border:1px solid rgba(196,168,122,.55);z-index:4;filter:saturate(.9) contrast(1.08)}
+.front .vignette{position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,18,15,1) 0%,rgba(16,18,15,.92) 42%,rgba(16,18,15,.1) 100%);pointer-events:none;z-index:5}
+
+/* Header bar */
+.front .top-strip{position:absolute;top:0;left:0;right:0;height:8px;background:var(--stamp);z-index:30}
+.front .header{position:absolute;top:28px;left:52px;right:52px;display:flex;justify-content:space-between;align-items:flex-start;z-index:30}
+.front .org-name{font-size:18px;font-weight:900;color:var(--cream);letter-spacing:1px;text-shadow:none;display:flex;align-items:center;gap:10px}
+.front .org-name .icon{width:32px;height:32px;background:var(--stamp);border-radius:0;display:flex;align-items:center;justify-content:center;font-size:14px;transform:none;color:#10120f}
+.front .event-date{text-align:right;color:var(--stamp)}
+.front .event-date .date-main{font-size:28px;font-weight:900;letter-spacing:3px;line-height:1}
+.front .event-date .date-sub{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:4px;margin-top:2px}
+
+/* BIG CHARACTER TITLE - 大字报 */
+.front .title-block{position:absolute;top:112px;left:58px;width:430px;z-index:30}
+.front .title-tag{display:inline-block;font-size:15px;font-weight:900;color:#10120f;letter-spacing:1px;background:var(--stamp);padding:7px 14px;margin-bottom:18px;border-radius:0;transform:none}
+.front .title-main{font-size:96px;font-weight:900;color:var(--stamp);letter-spacing:0;text-shadow:none;line-height:.98}
+.front .title-en{font-size:15px;font-weight:800;color:rgba(245,240,232,.68);letter-spacing:2px;margin-top:18px;margin-left:0;line-height:1.5}
+
+/* Stats - positioned at bottom-left */
+.front .stats-row{position:absolute;bottom:104px;left:58px;width:430px;display:grid;grid-template-columns:repeat(2,1fr);gap:0;z-index:30;border:1px solid rgba(196,168,122,.55)}
+.front .stat-pill{background:rgba(245,240,232,.06);backdrop-filter:none;border-right:1px solid rgba(196,168,122,.35);border-bottom:1px solid rgba(196,168,122,.35);padding:15px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.front .stat-pill:nth-child(2n){border-right:0}
+.front .stat-pill:nth-child(n+3){border-bottom:0}
+.front .stat-pill .val{font-size:28px;font-weight:900;color:var(--cream);line-height:1}
+.front .stat-pill .lbl{font-size:10px;color:rgba(245,240,232,.5);letter-spacing:1px;text-transform:none;font-weight:800}
+
+/* Arrow graffiti elements */
+.front .arrow-graf{position:absolute;z-index:25}
+.front .arrow-graf svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))}
+
+/* Trail canvas - transparent overlay, adaptive line contrast */
+.front .trail-canvas{position:absolute;bottom:58px;right:72px;width:310px;height:230px;z-index:32;pointer-events:none;background:transparent;border:0;padding:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.32))}
+
+/* Bottom bar - no gradient overlay */
+.front .bottom-bar{position:absolute;bottom:0;left:0;right:0;height:70px;z-index:30;display:flex;align-items:flex-end;padding:0 58px 22px;justify-content:space-between;background:transparent}
+.front .bottom-bar .tagline{font-size:16px;font-weight:800;color:var(--stamp);letter-spacing:4px}
+.front .bottom-bar .camping-icons{display:flex;gap:16px;align-items:center}
+.front .bottom-bar .camping-icons svg{opacity:0.6}
+.front .bottom-bar .tagline-en{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2px}
+
+/* Tape collage effect */
+.front .tape{position:absolute;width:60px;height:18px;background:rgba(255,255,255,0.15);z-index:35;transform:rotate(-5deg)}
+
+/* ===== BACK ===== */
+.back{width:1200px;height:800px;background:var(--back-bg);display:flex;position:relative;overflow:hidden;color:var(--back-ink)}
+.back::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(16,18,15,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,18,15,.04) 1px,transparent 1px);background-size:36px 36px;pointer-events:none}
+
+.back .left{width:470px;padding:34px 30px 34px 38px;display:flex;flex-direction:column;border-right:2px solid #181a14;position:relative;height:100%;box-sizing:border-box;overflow:hidden}
+.back .back-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.back .back-logo{width:36px;height:36px;background:#181a14;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--stamp);flex-shrink:0}
+.back .back-title{font-size:22px;font-weight:900;color:var(--back-ink);letter-spacing:0}
+.back .back-subtitle{font-size:10px;color:#5a7a6a;letter-spacing:2px;margin-top:2px;font-weight:800}
+
+.back .section-label{font-size:12px;color:var(--back-ink);letter-spacing:1px;text-transform:none;margin-bottom:10px;font-weight:900;display:flex;align-items:center;gap:6px}
+.back .section-label::before{content:'';width:18px;height:3px;background:var(--stamp)}
+
+.back .elevation-chart{width:100%;height:160px;position:relative;overflow:hidden;margin-bottom:18px;flex-shrink:0}
+.back .elevation-chart canvas{width:100%;height:100%}
+
+.back .summary-section{flex-shrink:0;margin-bottom:16px}
+.back .summary-text{font-size:15px;color:var(--back-ink);line-height:1.85}
+.back .summary-text strong{color:var(--mineral);font-weight:700}
+
+/* Bottom-left compass/nature decoration */
+/* Graffiti zone - fills remaining left space on back */
+.back .graffiti-zone{flex:1;min-height:0;margin-top:14px;z-index:5}
+.graffiti-box{width:100%;height:100%;border:2px solid #181a14;border-radius:0;display:flex;align-items:flex-start;justify-content:flex-start;background:rgba(196,168,122,0.08);position:relative}
+.graffiti-prompt{font-size:12px;color:#5a7a6a;opacity:.8;letter-spacing:0;font-style:normal;font-weight:800;position:absolute;top:12px;left:14px}
+
+/* Right: writing area */
+.back .right{flex:1;padding:34px 40px 34px 32px;display:flex;flex-direction:column}
+
+.back .stamp-box{width:104px;height:126px;border:2px solid #181a14;border-radius:0;align-self:flex-end;margin-bottom:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--back-ink);font-size:14px;letter-spacing:0;font-weight:900;background:rgba(196,168,122,0.12)}
+
+.back .to-section{margin-bottom:8px}
+.back .to-line{border-bottom:2px solid #181a14;height:42px;display:flex;align-items:flex-end;padding-bottom:6px}
+.back .to-label{font-size:14px;color:var(--back-ink);letter-spacing:1px;font-weight:900}
+
+.back .message-area{flex:1;display:flex;flex-direction:column;margin-top:4px}
+.back .message-label{font-size:12px;color:var(--back-ink);letter-spacing:1px;margin-bottom:10px;font-weight:900}
+.back .message-lines{display:flex;flex-direction:column;gap:15px;flex:1}
+.back .message-line{border-bottom:1px solid rgba(24,26,20,.42);height:20px}
+
+.back .back-footer{margin-top:auto;padding-top:14px;border-top:2px solid #181a14;display:flex;justify-content:space-between;align-items:center}
+.back .back-footer-text{font-size:10px;color:#5a7a6a;letter-spacing:2px;font-weight:800}
+.back .back-footer .org-tag{font-size:10px;color:var(--back-ink);font-weight:900;letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<!-- ====== FRONT: 大字报潮流户外海报 ====== -->
+<div class="front">
+  <div class="bg-photo"></div>
+  <div class="vignette"></div>
+  <div class="top-strip"></div>
+
+  <!-- Tape collage marks -->
+  <div class="tape" style="top:16px;left:250px;transform:rotate(-7deg)"></div>
+  <div class="tape" style="top:16px;right:180px;transform:rotate(3deg)"></div>
+
+  <div class="header">
+    <div class="org-name">
+      <div class="icon">⛰️</div>
+      蜗牛山野
+    </div>
+    <div class="event-date">
+      <div class="date-main">2025.11.22</div>
+      <div class="date-sub">SATURDAY</div>
+    </div>
+  </div>
+
+  <div class="title-block">
+    <div class="title-tag">雁荡山</div>
+    <div class="title-main">雁荡三尖</div>
+    <div class="title-en">雁荡三尖 ARCHIVE</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-pill"><span class="val">17.41</span><span class="lbl">公里 KM</span></div>
+    <div class="stat-pill"><span class="val">1,074</span><span class="lbl">爬升 M ↑</span></div>
+    <div class="stat-pill"><span class="val">1,118</span><span class="lbl">最高 M ▲</span></div>
+    <div class="stat-pill"><span class="val">10小时28分</span><span class="lbl">耗时 TIME</span></div>
+  </div>
+
+  <!-- Arrow graffiti: dynamic trail direction hints -->
+  <div class="arrow-graf" style="top:365px;left:340px">
+    <svg width="80" height="24" viewBox="0 0 80 24"><path d="M0 12h65M55 4l12 8-12 8" stroke="#c4a87a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="arrow-graf" style="top:480px;left:420px">
+    <svg width="60" height="20" viewBox="0 0 60 20"><path d="M0 10h48M38 3l10 7-10 7" stroke="#c4a87a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/></svg>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="tagline-en">雁荡三尖 ARCHIVE</div>
+    <div class="camping-icons">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M12 2L2 20h20L12 2z"/><path d="M12 20V10"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
+    </div>
+  </div>
+
+  <canvas id="frontCanvas" class="trail-canvas" width="960" height="720"></canvas>
+</div>
+
+<!-- ====== BACK ====== -->
+<div class="back">
+  <div class="left">
+    <div class="back-header">
+      <div class="back-logo">⛰️</div>
+      <div>
+        <div class="back-title">雁荡三尖</div>
+        <div class="back-subtitle">雁荡三尖 ARCHIVE</div>
+      </div>
+    </div>
+
+    <div class="section-label">海拔剖面 ELEVATION</div>
+    <div class="elevation-chart">
+      <canvas id="backElevation"></canvas>
+    </div>
+
+    <div class="summary-section">
+      <div class="section-label">路线记录 NOTES</div>
+      <div class="summary-text">
+        全程<strong>17.41公里</strong>，爬升<strong>1,074米</strong>，最高<strong>1,118米</strong>，耗时<strong>10小时28分</strong>。
+      </div>
+    </div>
+
+    <!-- Bottom-left: graffiti zone -->
+    <div class="graffiti-zone">
+      <div class="graffiti-box">
+        <span class="graffiti-prompt">在这里画下你的记忆吧</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="stamp-box">
+      <div>邮票</div>
+      <div style="font-size:7px;margin-top:4px;opacity:0.5">STAMP</div>
+    </div>
+
+    <div class="to-section">
+      <div class="to-line"><span class="to-label">TO:</span></div>
+    </div>
+
+    <div class="message-area">
+      <div class="message-label">MESSAGE</div>
+      <div class="message-lines">
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+        <div class="message-line"></div><div class="message-line"></div>
+      </div>
+    </div>
+
+    <div class="back-footer">
+      <span class="back-footer-text">蜗牛山野</span>
+      <span class="org-tag">蜗牛山野</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const TRAIL_MAP=[[28.328116,121.008277],[28.328384,121.007793],[28.32855,121.007226],[28.328898,121.006821],[28.329343,121.006549],[28.329674,121.006104],[28.329762,121.005535],[28.330091,121.005099],[28.33032,121.004567],[28.330579,121.004073],[28.330767,121.003905],[28.33104,121.003843],[28.33151,121.003814],[28.331894,121.004158],[28.3318,121.003731],[28.332114,121.003831],[28.331961,121.003591],[28.332124,121.003524],[28.332591,121.003458],[28.3331,121.003344],[28.333499,121.003681],[28.333604,121.003898],[28.33374,121.00348],[28.333932,121.003022],[28.334148,121.002518],[28.334161,121.002946],[28.334432,121.002459],[28.334805,121.002085],[28.334922,121.001607],[28.335038,121.001168],[28.335284,121.000673],[28.335529,121.000201],[28.335756,120.999889],[28.336132,120.99964],[28.336264,120.999399],[28.336615,120.999064],[28.337064,120.998957],[28.337493,120.999129],[28.337882,120.99935],[28.338011,120.999834],[28.338175,121.000321],[28.338444,121.000751],[28.338597,121.001264],[28.338946,121.001678],[28.339299,121.001987],[28.339487,121.002506],[28.339808,121.002896],[28.340083,121.002969],[28.340414,121.002806],[28.340935,121.00262],[28.341158,121.002155],[28.341446,121.001874],[28.341548,121.002236],[28.341608,121.002083],[28.341903,121.001727],[28.341954,121.001374],[28.341854,121.001187],[28.341688,121.000663],[28.341725,121.000156],[28.341872,121.000001],[28.34218,121.000342],[28.34234,121.000534],[28.342726,121.000612],[28.343005,121.000154],[28.343157,120.999654],[28.343221,120.999074],[28.343405,120.998553],[28.343655,120.998103],[28.343812,120.997602],[28.344048,120.997121],[28.344238,120.996651],[28.344434,120.996187],[28.344514,120.995593],[28.344542,120.995243],[28.344789,120.995654],[28.345231,120.995448],[28.345721,120.995589],[28.346216,120.995613],[28.34662,120.995881],[28.346945,120.995769],[28.347191,120.995362],[28.347385,120.995451],[28.347879,120.995399],[28.347875,120.995686],[28.347962,120.996116],[28.348201,120.996505],[28.348341,120.996881],[28.348608,120.997163],[28.349018,120.997467],[28.349205,120.997953],[28.349522,120.997718],[28.349806,120.997431],[28.349993,120.997316],[28.350264,120.997253],[28.350459,120.996989],[28.350695,120.996733],[28.350939,120.996488],[28.35118,120.996244],[28.351463,120.996281],[28.351838,120.996667],[28.352272,120.99681],[28.352724,120.996968],[28.353144,120.997077],[28.3536,120.997012],[28.354053,120.996997],[28.354513,120.996851],[28.35481,120.997056],[28.354837,120.99757],[28.354841,120.998109],[28.354995,120.998635],[28.355263,120.99908],[28.355453,120.999365],[28.355641,120.999765],[28.355956,121.000189],[28.356136,121.000717],[28.356248,121.001242],[28.356452,121.001748],[28.356729,121.002208],[28.357005,121.002657],[28.357146,121.003231],[28.357414,121.003654],[28.357701,121.003952],[28.357875,121.004178],[28.357922,121.004506],[28.357911,121.004763],[28.357891,121.005301],[28.357962,121.005827],[28.358043,121.006297],[28.357992,121.006668],[28.358045,121.007191],[28.358158,121.007723],[28.358314,121.008206],[28.358486,121.008724],[28.3586,121.009277],[28.358777,121.009763],[28.359173,121.010051],[28.359499,121.010412],[28.359783,121.01087],[28.359897,121.011387],[28.359936,121.011914],[28.359965,121.012464],[28.360006,121.012994],[28.360004,121.013566],[28.360205,121.014056],[28.360201,121.014624],[28.360172,121.015163],[28.360223,121.015683],[28.360457,121.016173],[28.360573,121.016721],[28.360943,121.017068],[28.361416,121.017305],[28.36173,121.017681],[28.361988,121.018083],[28.362101,121.018637],[28.362177,121.019152],[28.362063,121.019649],[28.362057,121.02016],[28.36229,121.020607],[28.36259,121.021025],[28.362682,121.021486],[28.362671,121.022],[28.362744,121.022528],[28.362867,121.023039],[28.363016,121.023539],[28.363338,121.023917],[28.363597,121.024355],[28.363897,121.024761],[28.363913,121.025324],[28.364112,121.025795],[28.364366,121.026238],[28.364638,121.026689],[28.364941,121.027103],[28.365354,121.027378],[28.3657,121.027754],[28.365921,121.028016],[28.366098,121.028434],[28.366078,121.028791],[28.366078,121.029311],[28.366026,121.029812],[28.366222,121.030242],[28.366249,121.030737],[28.366464,121.031193],[28.366683,121.031427],[28.366814,121.03165],[28.36696,121.031931],[28.36701,121.032095],[28.367098,121.032495],[28.367248,121.032817],[28.367308,121.032971],[28.36753,121.033334],[28.367584,121.033598],[28.367679,121.034045],[28.367718,121.034528],[28.367717,121.035072],[28.367707,121.035603],[28.367634,121.036044],[28.367769,121.036518],[28.367991,121.036754],[28.367837,121.036881],[28.367502,121.037214],[28.367119,121.037532],[28.366748,121.037673],[28.366309,121.037852],[28.365945,121.038241],[28.365912,121.038686],[28.365988,121.039126],[28.366146,121.039302],[28.366246,121.03979],[28.366255,121.040258],[28.366412,121.040726],[28.36665,121.041107],[28.366774,121.041581],[28.366563,121.041833],[28.366516,121.042347],[28.36639,121.042819],[28.366305,121.043352],[28.366432,121.04382],[28.36667,121.044267],[28.366971,121.044709],[28.367219,121.045155],[28.367368,121.045653],[28.367629,121.046015],[28.367909,121.046407],[28.368131,121.046788],[28.368168,121.047303],[28.368395,121.047698],[28.368598,121.048147],[28.36895,121.04842],[28.369168,121.048801],[28.369317,121.049227],[28.369521,121.049696],[28.36973,121.050191],[28.37007,121.050268],[28.370049,121.050781],[28.369998,121.051337],[28.370014,121.05188],[28.369996,121.052404],[28.369943,121.052944],[28.369962,121.05351],[28.370108,121.054076],[28.370112,121.054648],[28.369963,121.054968],[28.369597,121.055023],[28.369148,121.054978],[28.368648,121.055048],[28.368275,121.054934],[28.367793,121.055032],[28.367382,121.055305],[28.367143,121.05528],[28.366734,121.055355],[28.366344,121.055575],[28.366112,121.055419],[28.36599,121.05491],[28.366024,121.054382],[28.36614,121.05388],[28.366058,121.053389],[28.36579,121.052972],[28.365767,121.052425],[28.365609,121.052],[28.365392,121.0515],[28.36522,121.051296],[28.364959,121.051065],[28.36466,121.050779],[28.364414,121.050383],[28.364087,121.050501],[28.363681,121.050315],[28.363403,121.050033],[28.363159,121.050041],[28.362797,121.050054],[28.362533,121.049674],[28.362185,121.0494],[28.361872,121.04902],[28.36176,121.048589],[28.361882,121.048125],[28.362004,121.047739],[28.361729,121.047425],[28.361533,121.046966],[28.361406,121.046413],[28.361019,121.046238],[28.360825,121.045878],[28.360577,121.045449],[28.360213,121.045236],[28.359828,121.0451],[28.359374,121.044928],[28.35916,121.044493],[28.359082,121.044213],[28.358669,121.044196],[28.35818,121.044191],[28.358014,121.044567],[28.357876,121.045095],[28.357807,121.045573],[28.357449,121.045941],[28.35718,121.046362],[28.357407,121.046854],[28.357505,121.047388],[28.357812,121.04765],[28.358025,121.0481],[28.357918,121.048254],[28.357823,121.048717],[28.35758,121.049128],[28.357185,121.049376],[28.356741,121.049473],[28.356296,121.049601],[28.355807,121.049555],[28.355357,121.049557],[28.355132,121.049384]];
+const PROFILE=[[0,47],[87,44],[173,46],[258,47],[344,51],[432,52],[517,61],[603,74],[686,93],[774,110],[860,106],[947,116],[1032,136],[1131,143],[1219,158],[1307,153],[1396,155],[1485,164],[1572,179],[1657,181],[1744,186],[1826,199],[1917,216],[2004,234],[2089,248],[2176,260],[2266,280],[2351,300],[2434,303],[2522,310],[2610,317],[2698,327],[2786,339],[2882,357],[2976,346],[3078,401],[3189,392],[3303,419],[3450,425],[3597,439],[3692,442],[3774,460],[3861,465],[3947,473],[4033,472],[4114,467],[4197,470],[4281,473],[4371,490],[4457,500],[4543,505],[4631,525],[4713,539],[4795,553],[4880,564],[4966,562],[5050,564],[5134,564],[5221,564],[5311,571],[5401,580],[5483,610],[5583,643],[5681,672],[5770,701],[5858,734],[5946,760],[6025,788],[6106,801],[6195,836],[6274,853],[6355,869],[6437,884],[6521,889],[6602,903],[6688,925],[6773,925],[6859,934],[6944,921],[7031,940],[7119,967],[7206,987],[7291,1000],[7376,995],[7457,986],[7538,949],[7621,932],[7704,930],[7788,936],[7873,942],[7957,940],[8041,945],[8126,958],[8211,958],[8294,957],[8379,943],[8464,937],[8548,921],[8631,899],[8724,891],[8810,882],[8893,882],[8980,880],[9063,904],[9149,893],[9234,870],[9321,868],[9408,865],[9490,861],[9577,840],[9656,811],[9739,798],[9820,770],[9900,745],[9985,752],[10067,771],[10150,810],[10236,826],[10320,831],[10403,840],[10484,860],[10569,872],[10662,866],[10753,883],[10841,905],[10922,929],[11008,949],[11092,979],[11177,972],[11259,974],[11341,989],[11422,1011],[11502,1012],[11585,987],[11669,966],[11754,954],[11843,930],[11925,923],[12006,908],[12087,911],[12167,925],[12248,938],[12333,907],[12418,936],[12502,958],[12583,974],[12666,976],[12747,963],[12828,919],[12909,947],[12990,988],[13072,1039],[13155,1071],[13238,1074],[13321,1092],[13404,1104],[13490,1080],[13573,1083],[13656,1084],[13739,1093],[13828,1090],[13911,1068],[13995,1033],[14078,999],[14163,977],[14244,964],[14323,928],[14401,889],[14482,870],[14562,848],[14651,828],[14735,798],[14817,777],[14902,763],[14986,738],[15077,716],[15159,692],[15241,661],[15324,642],[15407,634],[15486,597],[15565,561],[15647,537],[15727,511],[15812,510],[15898,499],[15981,488],[16062,468],[16146,464],[16231,443],[16312,433],[16396,445],[16481,454],[16566,466],[16650,457],[16735,468],[16818,444],[16899,432],[16980,416],[17063,381],[17148,352],[17230,312],[17312,289],[17393,267],[17415,263]];
+
+const PINE='#6d8b5e';const MINERAL='#5a7a6a';const EARTH_GOLD='#c4a87a';
+const ACCENT='#e07b3c';
+
+// ===== FRONT: GPX-based 2D Trail Map (flat style) =====
+(function(){
+  const c=document.getElementById('frontCanvas');
+  const ctx=c.getContext('2d');
+  const W=480,H=360,dpr=2;
+  c.width=W*dpr;c.height=H*dpr;ctx.scale(dpr,dpr);
+
+  // Trail area with padding
+  const padL=20,padR=20,padT=20,padB=20;
+  const pw=W-padL-padR;
+  const ph=H-padT-padB;
+
+  // Compute bounds from TRAIL_MAP
+  let minLat=90,maxLat=-90,minLon=180,maxLon=-180;
+  TRAIL_MAP.forEach(p=>{
+    if(p[0]<minLat)minLat=p[0];
+    if(p[0]>maxLat)maxLat=p[0];
+    if(p[1]<minLon)minLon=p[1];
+    if(p[1]>maxLon)maxLon=p[1];
+  });
+  const latR=maxLat-minLat;
+  const lonR=maxLon-minLon;
+
+  const mapX=lon=>padL+((lon-minLon)/lonR)*pw;
+  const mapY=lat=>padT+ph-((lat-minLat)/latR)*ph;
+
+  function sampleBrightness(){
+    const photo=document.querySelector('.front .bg-photo');
+    if(!photo)return 90;
+    const url=getComputedStyle(photo).backgroundImage.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
+    const img=new Image();
+    img.src=url;
+    return new Promise(resolve=>{
+      img.onload=()=>{
+        try{
+          const sample=document.createElement('canvas');
+          sample.width=42;sample.height=42;
+          const sctx=sample.getContext('2d',{willReadFrequently:true});
+          sctx.drawImage(img,img.naturalWidth*.56,img.naturalHeight*.56,img.naturalWidth*.34,img.naturalHeight*.34,0,0,42,42);
+          const data=sctx.getImageData(0,0,42,42).data;
+          let total=0;
+          for(let i=0;i<data.length;i+=4){total+=0.2126*data[i]+0.7152*data[i+1]+0.0722*data[i+2];}
+          resolve(total/(data.length/4));
+        }catch(e){resolve(90);}
+      };
+      img.onerror=()=>resolve(90);
+    });
+  }
+
+  function drawPath(strokeStyle,lineWidth){
+    ctx.save();
+    ctx.strokeStyle=strokeStyle;
+    ctx.lineWidth=lineWidth;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.beginPath();
+    TRAIL_MAP.forEach((p,i)=>{
+      const x=mapX(p[1]),y=mapY(p[0]);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();ctx.restore();
+  }
+
+  sampleBrightness().then(avg=>{
+  const onLight=avg>138;
+  const halo=onLight?'rgba(255,250,240,0.78)':'rgba(10,14,10,0.74)';
+  const line=onLight?'rgba(22,38,25,0.94)':'rgba(255,250,240,0.94)';
+  const label=onLight?'rgba(22,38,25,0.92)':'rgba(255,250,240,0.94)';
+
+  drawPath(halo,8);
+  drawPath(line,3.6);
+
+  // Three markers only: start, peak, end
+  const MARKERS=[
+    {frac:0.0, label:'起点', color:'#6d8b5e'},
+    {frac:0.58, label:'PEAK', color:'#e07b3c'},
+    {frac:1.0, label:'终点', color:'#5a7a6a'}
+  ];
+
+  MARKERS.forEach(mk=>{
+    const idx=Math.min(TRAIL_MAP.length-1,Math.floor(mk.frac*(TRAIL_MAP.length-1)));
+    const p=TRAIL_MAP[idx];
+    const x=mapX(p[1]),y=mapY(p[0]);
+
+    ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);
+    ctx.fillStyle=halo;ctx.fill();
+
+    ctx.beginPath();ctx.arc(x,y,4.6,0,Math.PI*2);
+    ctx.fillStyle=mk.color;ctx.fill();
+    ctx.strokeStyle=line;ctx.lineWidth=1.5;ctx.stroke();
+
+    ctx.fillStyle=label;ctx.font='bold 11px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.textAlign='center';
+    ctx.shadowColor=onLight?'rgba(255,250,240,0.78)':'rgba(0,0,0,0.72)';
+    ctx.shadowBlur=3;
+    ctx.fillText(mk.label,x,y-16);
+    ctx.shadowBlur=0;
+    ctx.textAlign='left';
+  });
+  });
+})();
+
+// ===== BACK: Elevation Profile (minimal) =====
+(function(){
+  const c=document.getElementById('backElevation');
+  const ctx=c.getContext('2d');
+  const container=document.querySelector('.elevation-chart');
+  const W=container.clientWidth,H=container.clientHeight;
+  if(W===0||H===0){setTimeout(arguments.callee,100);return;}
+  const dpr=2;
+  c.width=W*dpr;c.height=H*dpr;ctx.scale(dpr,dpr);
+
+  const maxY=1200;
+  const pad={t:10,b:10,l:10,r:10};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+
+  // Fill under curve (subtle)
+  ctx.beginPath();
+  ctx.moveTo(pad.l,H-pad.b);
+  PROFILE.forEach(pt=>{
+    ctx.lineTo(pad.l+(pt[0]/17415)*cw, pad.t+ch-(pt[1]/maxY)*ch);
+  });
+  ctx.lineTo(W-pad.r,H-pad.b);ctx.closePath();
+  ctx.fillStyle='rgba(90,122,106,0.15)';ctx.fill();
+
+  // Line only
+  ctx.beginPath();
+  PROFILE.forEach((pt,i)=>{
+    const x=pad.l+(pt[0]/17415)*cw;
+    const y=pad.t+ch-(pt[1]/maxY)*ch;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#5a7a6a';ctx.lineWidth=2;ctx.stroke();
+
+  // Peak marker only
+  const peakValue=Math.max(...PROFILE.map(pt=>pt[1]));
+  const peakPt=PROFILE.find(pt=>pt[1]===peakValue);
+  if(peakPt){
+    const px=pad.l+(peakPt[0]/17415)*cw;
+    const py=pad.t+ch-(peakPt[1]/maxY)*ch;
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle='#e07b3c';ctx.fill();
+    ctx.fillStyle='#e07b3c';ctx.font='bold 10px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.fillText(`▲ ${peakValue}m`,px+10,py-6);
+  }
+})();
+</script>
+</body>
+</html>

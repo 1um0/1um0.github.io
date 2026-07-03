@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1080">
+<title>山野路迹 · 04</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1080px; height: 1080px;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Hiragino Sans GB", SimHei, "Arial Unicode MS", sans-serif;
+  overflow: hidden; position: relative;
+  background: #fff7e8;
+  color: #161711;
+  --ink: #161711;
+  --paper: #fff7e8;
+  --paper-2: #f8e7c0;
+  --pine: #6d8b5e;
+  --mineral: #5a7a6a;
+  --gold: #f0c75a;
+  --cream: #fff8e5;
+  --accent: #f05a3c;
+  --red: #f05a3c;
+  --blue: #2f6f8f;
+  --route-dark: #171b14;
+  --text-scrim: 0.520;
+  --data-scrim: 0.440;
+  --team-watermark-opacity: 0.180;
+  --team-watermark-dark-opacity: 0.130;
+  --photo-border-width: 0px;
+  --shadow: 0 28px 70px rgba(26, 21, 12, 0.26);
+}
+
+body::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(rgba(21,23,17,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21,23,17,0.04) 1px, transparent 1px);
+  background-size: 42px 42px;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: absolute; inset: 22px;
+  border: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.photo-layer {
+  position: absolute;
+  background-image: url("photos/IMG_7379.jpg");
+  background-position: center;
+  background-size: cover;
+  box-shadow: var(--shadow);
+  z-index: 1;
+}
+.photo-layer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.18) 100%);
+}
+
+.headline-card {
+  position: absolute;
+  z-index: 7;
+  background: rgba(255, 250, 240, var(--text-scrim));
+  color: var(--ink);
+  box-shadow: 0 18px 42px rgba(27, 20, 10, 0.12);
+  backdrop-filter: blur(8px);
+  padding: 34px 36px;
+}
+.role {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--red);
+  margin-bottom: 12px;
+}
+.role::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--red);
+}
+.headline-card h1 {
+  font-size: 74px;
+  line-height: 0.98;
+  letter-spacing: 0;
+  font-weight: 950;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.headline-card p {
+  margin-top: 18px;
+  font-size: 28px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: rgba(21, 23, 17, 0.72);
+  text-wrap: pretty;
+}
+
+.caption-sticker {
+  position: absolute;
+  z-index: 8;
+  background: color-mix(in srgb, var(--accent) 82%, transparent);
+  color: white;
+  border-radius: 999px;
+  padding: 16px 26px;
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 950;
+  box-shadow: 0 15px 28px rgba(217, 75, 43, 0.28);
+}
+.stamp {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  min-width: 116px;
+  min-height: 72px;
+  padding: 14px 20px;
+  color: var(--red);
+                  border: 3px solid var(--red);
+  background: rgba(255, 250, 240, var(--text-scrim));
+  transform: rotate(-8deg);
+  font-size: 23px;
+  font-weight: 950;
+  line-height: 1;
+  text-align: center;
+}
+
+.data-strip {
+  position: absolute;
+  z-index: 8;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.data-tile {
+  background: rgba(255, 250, 240, var(--data-scrim));
+  color: var(--ink);
+  padding: 13px 17px 14px;
+  min-width: 118px;
+  box-shadow: 0 10px 22px rgba(27, 20, 10, 0.08);
+  backdrop-filter: blur(7px);
+}
+.data-tile span {
+  display: block;
+  color: rgba(21, 23, 17, 0.58);
+  font-size: 15px;
+  font-weight: 800;
+}
+.data-tile b {
+  display: block;
+  margin-top: 3px;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--pine);
+}
+
+.map-chip {
+  position: absolute;
+  z-index: 8;
+  width: 236px;
+  height: 258px;
+  padding: 0;
+  background: transparent;
+  color: var(--trail-text, var(--cream));
+  box-shadow: none;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.28));
+  pointer-events: none;
+}
+.map-chip svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.map-label {
+  display: none;
+}
+.trail-svg {
+  --trail-line: rgba(245,240,232,0.92);
+  --trail-halo: rgba(15,18,14,0.72);
+  --trail-point-stroke: rgba(245,240,232,0.96);
+}
+.trail-on-light .trail-svg {
+  --trail-line: color-mix(in srgb, var(--route-dark) 92%, transparent);
+  --trail-halo: rgba(255,250,240,0.78);
+  --trail-point-stroke: rgba(255,250,240,0.96);
+}
+.trail-line {
+  stroke: var(--trail-line);
+}
+.trail-halo {
+  stroke: var(--trail-halo);
+  opacity: 0.92;
+}
+.trail-point-halo {
+  fill: var(--trail-halo);
+  opacity: 0.8;
+}
+.trail-point {
+  stroke: var(--trail-point-stroke);
+}
+
+.top-meta, .brandline {
+  position: absolute;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(21, 23, 17, 0.54);
+  font-size: 18px;
+  font-weight: 850;
+}
+.top-meta {
+  top: 42px;
+  left: 48px;
+  right: 48px;
+  text-shadow: 0 1px 12px rgba(255,250,240,0.42);
+}
+.top-meta .route-meta {
+  max-width: 760px;
+  overflow-wrap: anywhere;
+}
+.top-meta .place-meta {
+  font-weight: 750;
+  opacity: 0.72;
+}
+.brandline {
+  left: 48px;
+  right: 48px;
+  bottom: 36px;
+  justify-content: flex-end;
+  color: rgba(21, 23, 17, 0.58);
+}
+.brandline .team-name {
+  display: none;
+}
+.team-watermark {
+  position: absolute;
+  z-index: 6;
+  right: 48px;
+  bottom: 44px;
+  max-width: 820px;
+  font-size: 86px;
+  line-height: 0.9;
+  font-weight: 950;
+  color: rgba(255, 250, 240, var(--team-watermark-opacity));
+  text-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  pointer-events: none;
+  text-align: right;
+  mix-blend-mode: soft-light;
+  overflow-wrap: anywhere;
+}
+.route_ticket .team-watermark,
+.lookback_split .team-watermark,
+.ridge_frame .team-watermark,
+.finish_receipt .team-watermark {
+  color: rgba(21, 23, 17, var(--team-watermark-dark-opacity));
+  text-shadow: 0 2px 14px rgba(255,250,240,0.2);
+}
+.page-num {
+  color: rgba(21, 23, 17, 0.42);
+  font-size: 18px;
+  font-weight: 950;
+}
+.cover_burst .page-num,
+.grit_snapshot .page-num,
+.summit_proof .page-num {
+  color: rgba(255, 250, 240, 0.56);
+}
+
+.cover_burst {
+  background: #1f3d2d;
+}
+.cover_burst .photo-layer {
+  inset: 0;
+}
+.cover_burst .photo-layer::after {
+  background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.25) 54%, rgba(0,0,0,0.46) 100%);
+}
+.cover_burst .headline-card {
+  left: 56px;
+  right: 330px;
+  bottom: 88px;
+  background: rgba(255, 250, 240, var(--text-scrim));
+}
+.cover_burst .headline-card h1 {
+  font-size: 72px;
+  line-height: 1.02;
+}
+.cover_burst .stamp {
+  top: 92px;
+  right: 76px;
+}
+.cover_burst .caption-sticker {
+  right: 72px;
+  bottom: 312px;
+}
+.cover_burst .data-strip {
+  left: 92px;
+  top: 92px;
+}
+.cover_burst .map-chip {
+  right: 54px;
+  bottom: 66px;
+  width: 216px;
+  height: 238px;
+  transform: rotate(3deg);
+}
+.cover_burst .map-chip svg {
+  height: 100%;
+}
+.cover_burst .top-meta, .cover_burst .brandline {
+  color: rgba(255, 250, 240, 0.72);
+}
+
+.route_ticket .photo-layer {
+  top: 88px;
+  right: 62px;
+  width: 530px;
+  height: 720px;
+  border: var(--photo-border-width) solid var(--paper-2);
+  transform: rotate(2deg);
+}
+.route_ticket .headline-card {
+  left: 56px;
+  top: 118px;
+  width: 430px;
+  min-height: 612px;
+  border: 0;
+}
+.route_ticket .headline-card h1 {
+  font-size: 76px;
+}
+.route_ticket .data-strip {
+  left: 84px;
+  bottom: 128px;
+  width: 450px;
+}
+.route_ticket .map-chip {
+  right: 96px;
+  bottom: 88px;
+  transform: rotate(-2deg);
+}
+.route_ticket .stamp {
+  right: 430px;
+  top: 706px;
+}
+.route_ticket .caption-sticker {
+  right: 112px;
+  top: 676px;
+  background: var(--pine);
+}
+
+.climb_note .photo-layer {
+  left: 62px;
+  right: 62px;
+  top: 64px;
+  height: 640px;
+  border-radius: 0;
+}
+.climb_note .headline-card {
+  left: 92px;
+  right: 92px;
+  bottom: 104px;
+}
+.climb_note .headline-card h1 {
+  font-size: 66px;
+}
+.climb_note .data-strip {
+  left: 128px;
+  bottom: 338px;
+}
+.climb_note .map-chip {
+  right: 92px;
+  top: 94px;
+  transform: rotate(2deg);
+}
+.climb_note .stamp {
+  left: 96px;
+  top: 92px;
+}
+.climb_note .caption-sticker {
+  right: 108px;
+  bottom: 70px;
+}
+
+.grit_snapshot {
+  background: #211b14;
+}
+.grit_snapshot .photo-layer {
+  inset: 0;
+  filter: saturate(1.08) contrast(1.05);
+}
+.grit_snapshot .photo-layer::after {
+  background:
+    linear-gradient(90deg, rgba(33, 27, 20, 0.58) 0%, rgba(33, 27, 20, 0.12) 60%),
+    linear-gradient(180deg, rgba(0,0,0,0.01) 0%, rgba(0,0,0,0.32) 100%);
+}
+.grit_snapshot .headline-card {
+  left: 48px;
+  top: 96px;
+  width: 460px;
+  background: transparent;
+  color: var(--paper-2);
+  box-shadow: none;
+  padding: 0;
+}
+.grit_snapshot .headline-card h1 {
+  font-size: 82px;
+  color: var(--paper-2);
+}
+.grit_snapshot .headline-card p, .grit_snapshot .role {
+  color: rgba(255, 250, 240, 0.82);
+}
+.grit_snapshot .role::before {
+  background: var(--accent);
+}
+.grit_snapshot .data-strip {
+  left: 54px;
+  bottom: 88px;
+}
+.grit_snapshot .map-chip {
+  right: 70px;
+  bottom: 76px;
+  transform: rotate(-3deg);
+}
+.grit_snapshot .stamp {
+  right: 80px;
+  top: 86px;
+  background: var(--accent);
+  color: white;
+  border-color: white;
+}
+.grit_snapshot .caption-sticker {
+  left: 54px;
+  top: 540px;
+}
+.grit_snapshot .top-meta, .grit_snapshot .brandline {
+  color: rgba(255, 250, 240, 0.72);
+}
+
+.lookback_split .photo-layer {
+  left: 48px;
+  top: 72px;
+  bottom: 80px;
+  width: 590px;
+  border: var(--photo-border-width) solid var(--paper-2);
+  transform: rotate(-1.5deg);
+}
+.lookback_split .headline-card {
+  right: 56px;
+  top: 132px;
+  width: 385px;
+  min-height: 478px;
+  background: rgba(44, 100, 112, 0.68);
+  color: var(--paper-2);
+}
+.lookback_split .headline-card h1 {
+  font-size: 62px;
+  color: var(--paper-2);
+}
+.lookback_split .headline-card p, .lookback_split .role {
+  color: rgba(255, 250, 240, 0.84);
+}
+.lookback_split .role::before {
+  background: var(--paper-2);
+}
+.lookback_split .data-strip {
+  right: 70px;
+  bottom: 132px;
+  width: 380px;
+}
+.lookback_split .map-chip {
+  left: 96px;
+  bottom: 116px;
+}
+.lookback_split .stamp {
+  right: 118px;
+  top: 648px;
+}
+.lookback_split .caption-sticker {
+  left: 96px;
+  top: 104px;
+  background: var(--blue);
+}
+
+.ridge_frame {
+  background: #e8dfd3;
+}
+.ridge_frame .photo-layer {
+  inset: 42px;
+  border: var(--photo-border-width) solid var(--paper-2);
+}
+.ridge_frame .photo-layer::after {
+  background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.28) 100%);
+}
+.ridge_frame .headline-card {
+  left: 82px;
+  bottom: 98px;
+  width: 560px;
+  background: rgba(255, 250, 240, var(--text-scrim));
+}
+.ridge_frame .headline-card h1 {
+  font-size: 70px;
+}
+.ridge_frame .map-chip {
+  right: 92px;
+  top: 96px;
+  transform: rotate(2deg);
+}
+.ridge_frame .data-strip {
+  right: 96px;
+  bottom: 112px;
+  width: 330px;
+}
+.ridge_frame .stamp {
+  left: 104px;
+  top: 100px;
+}
+.ridge_frame .caption-sticker {
+  right: 110px;
+  top: 392px;
+  background: var(--pine);
+}
+
+.summit_proof {
+  background: #19251c;
+}
+.summit_proof .photo-layer {
+  inset: 0;
+}
+.summit_proof .photo-layer::after {
+  background:
+    linear-gradient(180deg, rgba(15, 26, 18, 0.01) 0%, rgba(15, 26, 18, 0.48) 100%),
+    linear-gradient(90deg, rgba(15, 26, 18, 0.54) 0%, rgba(15, 26, 18, 0.08) 72%);
+}
+.summit_proof .headline-card {
+  left: 58px;
+  top: 116px;
+  width: 538px;
+  background: transparent;
+  color: var(--paper-2);
+  box-shadow: none;
+  padding: 0;
+}
+.summit_proof .headline-card h1 {
+  font-size: 152px;
+  color: var(--paper-2);
+  line-height: 0.84;
+}
+.summit_proof .headline-card p, .summit_proof .role {
+  color: rgba(255, 250, 240, 0.84);
+}
+.summit_proof .role::before {
+  background: var(--accent);
+}
+.summit_proof .data-strip {
+  left: 66px;
+  bottom: 96px;
+}
+.summit_proof .map-chip {
+  right: 70px;
+  bottom: 84px;
+}
+.summit_proof .stamp {
+  right: 88px;
+  top: 96px;
+  background: rgba(255, 250, 240, var(--text-scrim));
+}
+.summit_proof .caption-sticker {
+  left: 62px;
+  top: 500px;
+}
+.summit_proof .top-meta, .summit_proof .brandline {
+  color: rgba(255, 250, 240, 0.72);
+}
+
+.finish_receipt .photo-layer {
+  inset: 0;
+  filter: saturate(0.95);
+}
+.finish_receipt .photo-layer::after {
+  background: rgba(246, 240, 223, 0.64);
+}
+.finish_receipt .headline-card {
+  left: 172px;
+  right: 172px;
+  top: 150px;
+  bottom: 136px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border: 0;
+}
+.finish_receipt .headline-card h1 {
+  font-size: 86px;
+}
+.finish_receipt .data-strip {
+  left: 226px;
+  right: 226px;
+  bottom: 188px;
+  justify-content: center;
+}
+.finish_receipt .map-chip {
+  left: 64px;
+  bottom: 72px;
+  transform: rotate(-2deg);
+}
+.finish_receipt .stamp {
+  right: 122px;
+  top: 106px;
+}
+.finish_receipt .caption-sticker {
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  bottom: 98px;
+  background: var(--pine);
+}
+</style>
+</head>
+<body class="grit_snapshot">
+<div class="photo-layer"></div>
+<div class="team-watermark">蜗牛山野</div>
+<div class="top-meta">
+  <span class="route-meta">雁荡三尖 · 2025.11.22</span>
+  <span class="place-meta">雁荡山</span>
+  <span class="page-num">04/09</span>
+</div>
+<section class="headline-card">
+  
+  <h1>过程开始<br>上强度</h1>
+  <p>山风很好，腿不太同意</p>
+</section>
+<div class="caption-sticker">6.7km，已经不好装轻松</div>
+<div class="stamp">HARD MODE</div>
+
+<div class="map-chip">
+  
+  <svg class="trail-svg" width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <polyline class="trail-halo" points="103.7,370.0 91.5,357.4 79.1,348.6 78.7,337.7 77.9,326.5 73.7,321.1 61.0,312.1 51.9,301.3 59.0,288.7 71.3,278.1 69.3,264.6 64.9,258.2 59.1,256.3 52.0,247.9 38.4,239.7 31.6,231.7 31.1,215.8 37.6,207.7 44.4,197.0 38.8,187.5 39.3,174.8 39.5,156.7 52.0,150.6 64.2,142.7 77.7,133.2 87.0,129.4 100.6,127.2 113.6,119.0 127.2,112.6 142.3,110.9 154.4,100.9 167.5,95.7 180.7,90.7 194.0,83.3 207.1,74.9 216.9,63.1 229.8,61.8 237.4,55.7 245.9,51.0 259.6,50.6 268.0,54.8 276.9,63.9 288.0,58.6 300.6,61.4 313.6,52.8 325.0,44.5 336.3,35.4 348.5,31.4 364.1,30.6 365.7,45.5 369.3,61.1 357.0,63.4 345.2,70.1 339.7,82.6 334.6,94.7 323.5,98.4 312.4,107.7 305.5,119.8 313.1,130.1 324.8,130.0 334.5,135.1 334.5,151.7" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline class="trail-line" points="103.7,370.0 91.5,357.4 79.1,348.6 78.7,337.7 77.9,326.5 73.7,321.1 61.0,312.1 51.9,301.3 59.0,288.7 71.3,278.1 69.3,264.6 64.9,258.2 59.1,256.3 52.0,247.9 38.4,239.7 31.6,231.7 31.1,215.8 37.6,207.7 44.4,197.0 38.8,187.5 39.3,174.8 39.5,156.7 52.0,150.6 64.2,142.7 77.7,133.2 87.0,129.4 100.6,127.2 113.6,119.0 127.2,112.6 142.3,110.9 154.4,100.9 167.5,95.7 180.7,90.7 194.0,83.3 207.1,74.9 216.9,63.1 229.8,61.8 237.4,55.7 245.9,51.0 259.6,50.6 268.0,54.8 276.9,63.9 288.0,58.6 300.6,61.4 313.6,52.8 325.0,44.5 336.3,35.4 348.5,31.4 364.1,30.6 365.7,45.5 369.3,61.1 357.0,63.4 345.2,70.1 339.7,82.6 334.6,94.7 323.5,98.4 312.4,107.7 305.5,119.8 313.1,130.1 324.8,130.0 334.5,135.1 334.5,151.7" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle class="trail-point-halo" cx="58.0" cy="145.2" r="13"/>
+  <circle class="trail-point" cx="58.0" cy="145.2" r="7" fill="#e07b3c" stroke-width="2"/>
+</svg>
+</div>
+
+<div style="display:none">xhs_native_grid_story</div>
+<script>
+(function(){
+  const chip = document.querySelector('.map-chip');
+  if (!chip) return;
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.src = "photos/IMG_7379.jpg";
+  img.onload = function(){
+    try {
+      const canvas = document.createElement('canvas');
+      const size = 48;
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const rect = chip.getBoundingClientRect();
+      const cx = Math.max(0, Math.min(1, (rect.left + rect.width / 2) / 1080));
+      const cy = Math.max(0, Math.min(1, (rect.top + rect.height / 2) / 1080));
+      const sw = Math.max(24, img.naturalWidth * 0.24);
+      const sh = Math.max(24, img.naturalHeight * 0.24);
+      const sx = Math.max(0, Math.min(img.naturalWidth - sw, img.naturalWidth * cx - sw / 2));
+      const sy = Math.max(0, Math.min(img.naturalHeight - sh, img.naturalHeight * cy - sh / 2));
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, size, size);
+      const data = ctx.getImageData(0, 0, size, size).data;
+      let total = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        total += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+      }
+      const avg = total / (data.length / 4);
+      chip.classList.toggle('trail-on-light', avg > 138);
+      chip.style.setProperty('--trail-text', avg > 138 ? 'rgba(21,23,17,0.84)' : 'rgba(255,250,240,0.9)');
+      chip.style.setProperty('--trail-shadow', avg > 138 ? 'rgba(255,250,240,0.72)' : 'rgba(0,0,0,0.78)');
+    } catch (err) {
+      chip.classList.remove('trail-on-light');
+    }
+  };
+})();
+</script>
+
+</body>
+</html>

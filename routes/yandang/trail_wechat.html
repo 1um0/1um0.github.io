@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山野路迹 · 雁荡三尖</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1080px;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Hiragino Sans GB", SimHei, "Arial Unicode MS", sans-serif;
+  background: #f2eadb;
+  color: #1f241d;
+  line-height: 1.8;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(rgba(31,36,29,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31,36,29,0.035) 1px, transparent 1px);
+  background-size: 54px 54px;
+}
+
+/* ---- 封面头图 ---- */
+.hero {
+  width: 100%; height: 760px;
+  position: relative; overflow: hidden;
+  background: #1f241d;
+}
+.hero img {
+  position: absolute; right: 60px; top: 70px;
+  width: 620px; height: 560px; object-fit: cover;
+  display: block;
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  filter: saturate(0.9) contrast(1.08);
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, #1f241d 100%, transparent) 0%, color-mix(in srgb, #1f241d 88%, transparent) 38%, color-mix(in srgb, #1f241d 12%, transparent) 100%);
+  pointer-events: none;
+}
+.hero-title-wrap {
+  position: absolute; top: 92px; left: 82px; width: 440px;
+}
+.hero-title {
+  font-size: 86px; font-weight: 900; color: #b49a66;
+  letter-spacing: 0; line-height: 1.02;
+  text-wrap: balance;
+}
+.hero-sub {
+  font-size: 16px; color: rgba(245,240,232,0.72);
+  margin-top: 24px; letter-spacing: 0; font-weight: 700;
+}
+.hero-dossier {
+  position: absolute; left: 82px; bottom: 78px;
+  width: 430px; border: 1px solid color-mix(in srgb, #b49a66 48%, transparent);
+  padding: 20px 22px;
+  color: rgba(245,240,232,0.76);
+  font-size: 14px; line-height: 1.8;
+}
+.hero-dossier strong { color: #b49a66; font-weight: 900; }
+.hero-stamp {
+  position: absolute; right: 82px; top: 54px;
+  color: rgba(245,240,232,0.34);
+  font-size: 12px; letter-spacing: 3px;
+}
+
+/* ---- 引导语区 ---- */
+.intro {
+  padding: 74px 96px 48px;
+  background: #fffaf0;
+  color: #1f241d;
+}
+.intro-meta {
+  font-size: 15px; color: #6f765e;
+  letter-spacing: 0;
+  margin-bottom: 22px;
+  font-weight: 800;
+}
+.intro-meta span { color: #b49a66; }
+.intro-quote {
+  font-size: 28px; color: #1f241d;
+  line-height: 1.55; letter-spacing: 0;
+  max-width: 820px; margin: 0;
+  font-weight: 800;
+}
+
+/* ---- 数据卡片区 ---- */
+.stats-section {
+  padding: 54px 80px;
+  background: #fffaf0;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 2px solid #1f241d;
+  border-bottom: 2px solid #1f241d;
+}
+.stat-card {
+  background: transparent;
+  border-radius: 0;
+  padding: 24px 18px;
+  text-align: left;
+  border-right: 1px solid color-mix(in srgb, #1f241d 28%, transparent);
+}
+.stat-card:last-child { border-right: 0; }
+.stat-card .icon {
+  font-size: 12px; margin-bottom: 16px;
+  color: #b65f3a;
+  font-weight: 900;
+}
+.stat-card .value {
+  font-size: 34px; font-weight: 900;
+  color: #1f241d;
+  letter-spacing: 0;
+}
+.stat-card .label {
+  font-size: 13px; color: #6f765e;
+  margin-top: 6px; letter-spacing: 0;
+  font-weight: 800;
+}
+
+/* ---- 正文故事 ---- */
+.story-section {
+  padding: 72px 140px 64px;
+  background: #1f241d;
+}
+.story-p {
+  font-size: 19px; line-height: 2.05;
+  color: rgba(245,240,232,0.86);
+  margin-bottom: 28px;
+  text-align: justify;
+  letter-spacing: 0;
+}
+.story-p:first-letter {
+  font-size: 42px; font-weight: 900;
+  color: #b49a66;
+}
+
+/* ---- Section divider ---- */
+.section-divider {
+  display: none;
+}
+.section-divider .line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, #b49a6650, transparent);
+}
+.section-divider .dot {
+  width: 8px; height: 8px;
+  background: #b49a66;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* ---- 照片区 ---- */
+.photo-blocks {
+  padding: 38px 80px 60px;
+  background: #1f241d;
+}
+.photo-block {
+  margin-bottom: 52px;
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 24px;
+  align-items: end;
+}
+.photo-block:nth-child(even) {
+  grid-template-columns: 220px 1fr;
+}
+.photo-block:nth-child(even) .photo-frame { grid-column: 2; }
+.photo-block:nth-child(even) .photo-caption { grid-column: 1; grid-row: 1; text-align: right; }
+.photo-frame {
+  border-radius: 0; overflow: hidden;
+  border: 1px solid color-mix(in srgb, #b49a66 55%, transparent);
+  box-shadow: 0 20px 56px rgba(0,0,0,0.34);
+}
+.photo-frame img {
+  width: 100%; display: block;
+}
+.photo-caption {
+  font-size: 24px; color: #b49a66;
+  text-align: left; margin-top: 0;
+  letter-spacing: 0; font-style: normal;
+  font-weight: 900; line-height: 1.2;
+}
+
+/* ---- 海拔剖面 ---- */
+.elevation-section {
+  padding: 58px 80px 68px;
+  background: #fffaf0;
+}
+.elevation-title {
+  font-size: 20px; font-weight: 900;
+  color: #1f241d;
+  text-align: left; letter-spacing: 0;
+  margin-bottom: 30px;
+}
+.elevation-chart {
+  background: transparent;
+  border-radius: 0; padding: 30px 20px 20px;
+  border: 1px solid color-mix(in srgb, #1f241d 28%, transparent);
+  text-align: center;
+}
+.elevation-chart svg {
+  max-width: 100%;
+}
+
+/* ---- 路线复盘 ---- */
+.companion-section {
+  margin: 0;
+  padding: 64px 120px;
+  background: #1f241d;
+  border-radius: 0;
+  border-top: 1px solid color-mix(in srgb, #b49a66 48%, transparent);
+  text-align: left;
+  position: relative;
+}
+.companion-section::before {
+  content: 'AFTER ACTION';
+  position: absolute; top: 28px; left: 120px;
+  font-size: 12px; color: rgba(245,240,232,0.42);
+  letter-spacing: 2px; font-family: inherit; line-height: 1;
+}
+.companion-text {
+  font-size: 30px; color: #b49a66;
+  font-style: normal; letter-spacing: 0;
+  line-height: 1.6; font-weight: 900;
+}
+
+/* ---- 页脚 ---- */
+.footer {
+  padding: 60px 120px 80px;
+  text-align: center;
+  background: #fffaf0;
+}
+.footer-hashtags {
+  font-size: 16px; color: #6f765e;
+  letter-spacing: 2px; line-height: 2.4;
+}
+.footer-divider {
+  width: 60px; height: 2px;
+  background: #b49a66;
+  margin: 30px auto;
+  opacity: 0.5;
+}
+.footer-logo {
+  font-size: 14px; color: #6f765e;
+  letter-spacing: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- 封面头图 -->
+<div class="hero">
+  <img src="photos/IMG_7400.jpg" alt="雁荡三尖最高点">
+  <div class="hero-overlay"></div>
+  <div class="hero-stamp">field_dossier_article</div>
+  <div class="hero-title-wrap">
+    <div class="hero-title">雁荡三尖</div>
+    <div class="hero-sub">2025.11.22 · 蜗牛山野 · 雁荡山</div>
+  </div>
+  <div class="hero-dossier">
+    <strong>FIELD DOSSIER</strong><br>
+    路线：雁荡三尖<br>
+    情绪：硬核 / 狼狈但开心<br>
+    数据源：GPX / EXIF / SRTM
+  </div>
+</div>
+
+<!-- 引导语 -->
+<div class="intro">
+  <p class="intro-meta">
+    2025.11.22 · <span>蜗牛山野</span> · 雁荡山
+  </p>
+  <p class="intro-quote">
+    2025年11月22日，蜗牛山野在雁荡山完成雁荡三尖，全程17.41公里，耗时10小时28分钟，海拔跨度1074米，最高点1118米。一路硬核，也一路狼狈但开心。
+  </p>
+</div>
+
+<!-- 数据卡片 -->
+<div class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="icon">KM</div>
+      <div class="value">17.41 km</div>
+      <div class="label">总 距 离</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">UP</div>
+      <div class="value">1,074 m</div>
+      <div class="label">累 计 爬 升</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">HR</div>
+      <div class="value">10小时28分</div>
+      <div class="label">总 用 时</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">TOP</div>
+      <div class="value">1,118 m</div>
+      <div class="label">最高海拔</div>
+    </div>
+  </div>
+</div>
+
+<!-- Section divider -->
+<div class="section-divider">
+  <span class="line"></span><span class="dot"></span><span class="line"></span>
+</div>
+
+<!-- 正文故事 -->
+<div class="story-section">
+<p class="story-p">这不是轻松散步的一天。雁荡三尖一路有乱石坡、山脊和漫长下撤，走到后半程已经有点狼狈，但每一次回望都能看到自己刚刚翻过的山。硬核是真的，开心也是真的。</p>
+
+</div>
+
+<!-- Section divider -->
+<div class="section-divider">
+  <span class="line"></span><span class="dot"></span><span class="line"></span>
+</div>
+
+<!-- 照片配图 -->
+<div class="photo-blocks">
+
+    <div class="photo-block">
+      <div class="photo-frame">
+        <img src="photos/IMG_7364.jpg" alt="出发：进入现场">
+      </div>
+      <p class="photo-caption">出发：进入现场</p>
+    </div>
+    <div class="photo-block">
+      <div class="photo-frame">
+        <img src="photos/IMG_7369.jpg" alt="3.0km · 346m">
+      </div>
+      <p class="photo-caption">3.0km · 346m</p>
+    </div>
+    <div class="photo-block">
+      <div class="photo-frame">
+        <img src="photos/IMG_7379.jpg" alt="4.2km · 469m">
+      </div>
+      <p class="photo-caption">4.2km · 469m</p>
+    </div>
+    <div class="photo-block">
+      <div class="photo-frame">
+        <img src="photos/IMG_7390.jpg" alt="6.7km · 925m">
+      </div>
+      <p class="photo-caption">6.7km · 925m</p>
+    </div>
+    <div class="photo-block">
+      <div class="photo-frame">
+        <img src="photos/IMG_7414.jpg" alt="7.3km · 1004m">
+      </div>
+      <p class="photo-caption">7.3km · 1004m</p>
+    </div>
+    <div class="photo-block">
+      <div class="photo-frame">
+        <img src="photos/a89216c22db6598bdbc56c2dde0f4fba.JPG" alt="9.1km · 906m">
+      </div>
+      <p class="photo-caption">9.1km · 906m</p>
+    </div>
+</div>
+
+<!-- 海拔剖面 -->
+<div class="elevation-section">
+  <div class="elevation-title">▎海拔剖面 · 雁荡三尖</div>
+  <div class="elevation-chart">
+    <svg viewBox="0 0 960 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="elevGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6f765e" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#6f765e" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <path d="M50,190 L50.0,189.5 L55.0,190.0 L55.0,190.0 L60.0,189.7 L60.0,189.5 L65.0,189.2 L65.0,188.8 L70.0,188.5 L75.0,188.1 L75.0,187.1 L80.0,185.4 L80.0,183.8 L85.0,181.7 L85.0,179.5 L90.0,180.0 L95.0,179.5 L95.0,178.7 L100.0,177.9 L100.0,174.5 L105.0,173.8 L105.0,172.8 L110.0,170.8 L115.0,170.9 L115.0,171.8 L120.0,171.3 L120.0,170.4 L125.0,169.4 L125.0,167.2 L130.0,166.2 L135.0,167.4 L135.0,166.0 L140.0,164.9 L140.0,163.5 L145.0,161.0 L145.0,159.8 L150.0,157.4 L155.0,155.6 L155.0,154.2 L160.0,152.0 L160.0,150.2 L165.0,147.7 L165.0,145.8 L170.0,146.3 L175.0,145.5 L175.0,145.0 L180.0,143.9 L180.0,142.9 L185.0,141.4 L185.0,140.2 L190.0,138.5 L195.0,138.0 L195.0,139.1 L200.0,133.1 L200.0,128.4 L205.0,131.3 L205.0,127.6 L210.0,126.2 L215.0,125.7 L215.0,123.9 L220.0,123.5 L220.0,122.9 L225.0,121.3 L225.0,119.7 L230.0,119.0 L235.0,118.0 L235.0,117.1 L240.0,117.8 L240.0,118.1 L245.0,118.8 L245.0,118.1 L250.0,117.8 L255.0,116.4 L255.0,114.8 L260.0,113.9 L260.0,113.6 L265.0,112.2 L265.0,109.9 L270.0,108.0 L275.0,106.5 L275.0,105.0 L280.0,103.6 L280.0,102.3 L285.0,102.6 L285.0,101.8 L290.0,102.3 L295.0,102.1 L295.0,101.6 L300.0,102.3 L300.0,101.3 L305.0,102.3 L305.0,99.6 L310.0,95.5 L315.0,93.0 L315.0,89.0 L320.0,85.1 L320.0,82.0 L325.0,79.2 L325.0,74.3 L330.0,72.6 L335.0,69.2 L335.0,66.3 L340.0,63.3 L340.0,62.3 L345.0,58.2 L345.0,56.1 L350.0,53.5 L355.0,51.8 L355.0,50.1 L360.0,48.3 L360.0,48.0 L365.0,46.1 L365.0,45.1 L370.0,42.7 L375.0,41.4 L375.0,41.4 L380.0,40.4 L380.0,41.2 L385.0,42.1 L385.0,39.5 L390.0,36.5 L395.0,34.3 L395.0,31.4 L400.0,29.9 L400.0,28.7 L405.0,28.4 L405.0,29.4 L410.0,31.1 L415.0,33.8 L415.0,39.0 L420.0,40.2 L420.0,40.0 L425.0,40.2 L425.0,39.5 L430.0,38.8 L435.0,39.5 L435.0,38.8 L440.0,39.4 L440.0,36.0 L445.0,35.8 L445.0,36.1 L450.0,36.1 L455.0,36.0 L455.0,37.2 L460.0,38.7 L460.0,39.4 L465.0,40.5 L465.0,43.9 L470.0,45.8 L475.0,45.9 L475.0,49.0 L480.0,48.6 L480.0,47.6 L485.0,48.5 L485.0,49.0 L490.0,45.1 L495.0,44.8 L495.0,46.8 L500.0,49.1 L500.0,51.0 L505.0,51.0 L505.0,51.7 L510.0,51.5 L510.0,52.2 L515.0,53.9 L520.0,57.1 L520.0,60.6 L525.0,61.5 L525.0,63.8 L530.0,67.5 L530.0,70.1 L535.0,72.2 L540.0,70.6 L540.0,68.4 L545.0,65.3 L545.0,60.8 L550.0,59.4 L550.0,58.4 L555.0,57.2 L560.0,56.4 L560.0,54.2 L565.0,52.3 L565.0,51.5 L570.0,52.2 L570.0,51.3 L575.0,49.6 L580.0,48.3 L580.0,44.8 L585.0,41.9 L585.0,39.9 L590.0,37.3 L590.0,34.6 L595.0,32.3 L600.0,33.4 L600.0,32.8 L605.0,33.3 L605.0,30.6 L610.0,28.9 L610.0,30.4 L615.0,26.7 L620.0,28.9 L620.0,32.3 L625.0,34.5 L625.0,35.6 L630.0,37.0 L630.0,40.5 L635.0,40.5 L640.0,42.7 L640.0,44.2 L645.0,45.3 L645.0,44.1 L650.0,41.4 L650.0,38.8 L655.0,43.4 L660.0,44.4 L660.0,39.7 L665.0,41.0 L665.0,35.8 L670.0,34.6 L670.0,32.3 L675.0,32.8 L680.0,36.5 L680.0,37.5 L685.0,42.4 L685.0,40.0 L690.0,35.8 L690.0,30.7 L695.0,25.2 L700.0,20.1 L700.0,16.7 L705.0,17.1 L705.0,15.6 L710.0,13.2 L710.0,10.0 L715.0,13.5 L720.0,15.2 L720.0,14.6 L725.0,13.7 L725.0,14.6 L730.0,13.2 L730.0,13.4 L735.0,13.5 L740.0,14.9 L740.0,17.9 L745.0,23.2 L745.0,27.2 L750.0,30.1 L750.0,32.6 L755.0,33.3 L760.0,35.3 L760.0,40.9 L765.0,45.9 L765.0,48.0 L770.0,50.7 L770.0,53.4 L775.0,55.2 L780.0,57.7 L780.0,62.0 L785.0,64.0 L785.0,66.3 L790.0,67.9 L790.0,69.6 L795.0,72.9 L800.0,76.0 L800.0,79.0 L805.0,80.7 L805.0,84.1 L810.0,87.4 L810.0,89.1 L815.0,90.1 L820.0,92.0 L820.0,96.7 L825.0,101.1 L825.0,104.0 L830.0,106.8 L830.0,109.9 L835.0,110.7 L840.0,111.4 L840.0,112.4 L845.0,114.4 L845.0,115.1 L850.0,116.8 L850.0,118.1 L855.0,119.1 L860.0,122.4 L860.0,123.2 L865.0,124.4 L865.0,123.2 L870.0,121.2 L870.0,120.8 L875.0,120.5 L880.0,119.7 L880.0,120.3 L885.0,121.2 L885.0,120.3 L890.0,122.5 L890.0,123.5 L895.0,125.4 L900.0,127.2 L900.0,128.3 L905.0,133.3 L905.0,138.0 L910.0,142.8 L910.0,146.1 L915.0,148.7 L920.0,151.0 L920,190 Z" fill="url(#elevGrad)"/>
+  <path d="M50.0,189.5 L55.0,190.0 L55.0,190.0 L60.0,189.7 L60.0,189.5 L65.0,189.2 L65.0,188.8 L70.0,188.5 L75.0,188.1 L75.0,187.1 L80.0,185.4 L80.0,183.8 L85.0,181.7 L85.0,179.5 L90.0,180.0 L95.0,179.5 L95.0,178.7 L100.0,177.9 L100.0,174.5 L105.0,173.8 L105.0,172.8 L110.0,170.8 L115.0,170.9 L115.0,171.8 L120.0,171.3 L120.0,170.4 L125.0,169.4 L125.0,167.2 L130.0,166.2 L135.0,167.4 L135.0,166.0 L140.0,164.9 L140.0,163.5 L145.0,161.0 L145.0,159.8 L150.0,157.4 L155.0,155.6 L155.0,154.2 L160.0,152.0 L160.0,150.2 L165.0,147.7 L165.0,145.8 L170.0,146.3 L175.0,145.5 L175.0,145.0 L180.0,143.9 L180.0,142.9 L185.0,141.4 L185.0,140.2 L190.0,138.5 L195.0,138.0 L195.0,139.1 L200.0,133.1 L200.0,128.4 L205.0,131.3 L205.0,127.6 L210.0,126.2 L215.0,125.7 L215.0,123.9 L220.0,123.5 L220.0,122.9 L225.0,121.3 L225.0,119.7 L230.0,119.0 L235.0,118.0 L235.0,117.1 L240.0,117.8 L240.0,118.1 L245.0,118.8 L245.0,118.1 L250.0,117.8 L255.0,116.4 L255.0,114.8 L260.0,113.9 L260.0,113.6 L265.0,112.2 L265.0,109.9 L270.0,108.0 L275.0,106.5 L275.0,105.0 L280.0,103.6 L280.0,102.3 L285.0,102.6 L285.0,101.8 L290.0,102.3 L295.0,102.1 L295.0,101.6 L300.0,102.3 L300.0,101.3 L305.0,102.3 L305.0,99.6 L310.0,95.5 L315.0,93.0 L315.0,89.0 L320.0,85.1 L320.0,82.0 L325.0,79.2 L325.0,74.3 L330.0,72.6 L335.0,69.2 L335.0,66.3 L340.0,63.3 L340.0,62.3 L345.0,58.2 L345.0,56.1 L350.0,53.5 L355.0,51.8 L355.0,50.1 L360.0,48.3 L360.0,48.0 L365.0,46.1 L365.0,45.1 L370.0,42.7 L375.0,41.4 L375.0,41.4 L380.0,40.4 L380.0,41.2 L385.0,42.1 L385.0,39.5 L390.0,36.5 L395.0,34.3 L395.0,31.4 L400.0,29.9 L400.0,28.7 L405.0,28.4 L405.0,29.4 L410.0,31.1 L415.0,33.8 L415.0,39.0 L420.0,40.2 L420.0,40.0 L425.0,40.2 L425.0,39.5 L430.0,38.8 L435.0,39.5 L435.0,38.8 L440.0,39.4 L440.0,36.0 L445.0,35.8 L445.0,36.1 L450.0,36.1 L455.0,36.0 L455.0,37.2 L460.0,38.7 L460.0,39.4 L465.0,40.5 L465.0,43.9 L470.0,45.8 L475.0,45.9 L475.0,49.0 L480.0,48.6 L480.0,47.6 L485.0,48.5 L485.0,49.0 L490.0,45.1 L495.0,44.8 L495.0,46.8 L500.0,49.1 L500.0,51.0 L505.0,51.0 L505.0,51.7 L510.0,51.5 L510.0,52.2 L515.0,53.9 L520.0,57.1 L520.0,60.6 L525.0,61.5 L525.0,63.8 L530.0,67.5 L530.0,70.1 L535.0,72.2 L540.0,70.6 L540.0,68.4 L545.0,65.3 L545.0,60.8 L550.0,59.4 L550.0,58.4 L555.0,57.2 L560.0,56.4 L560.0,54.2 L565.0,52.3 L565.0,51.5 L570.0,52.2 L570.0,51.3 L575.0,49.6 L580.0,48.3 L580.0,44.8 L585.0,41.9 L585.0,39.9 L590.0,37.3 L590.0,34.6 L595.0,32.3 L600.0,33.4 L600.0,32.8 L605.0,33.3 L605.0,30.6 L610.0,28.9 L610.0,30.4 L615.0,26.7 L620.0,28.9 L620.0,32.3 L625.0,34.5 L625.0,35.6 L630.0,37.0 L630.0,40.5 L635.0,40.5 L640.0,42.7 L640.0,44.2 L645.0,45.3 L645.0,44.1 L650.0,41.4 L650.0,38.8 L655.0,43.4 L660.0,44.4 L660.0,39.7 L665.0,41.0 L665.0,35.8 L670.0,34.6 L670.0,32.3 L675.0,32.8 L680.0,36.5 L680.0,37.5 L685.0,42.4 L685.0,40.0 L690.0,35.8 L690.0,30.7 L695.0,25.2 L700.0,20.1 L700.0,16.7 L705.0,17.1 L705.0,15.6 L710.0,13.2 L710.0,10.0 L715.0,13.5 L720.0,15.2 L720.0,14.6 L725.0,13.7 L725.0,14.6 L730.0,13.2 L730.0,13.4 L735.0,13.5 L740.0,14.9 L740.0,17.9 L745.0,23.2 L745.0,27.2 L750.0,30.1 L750.0,32.6 L755.0,33.3 L760.0,35.3 L760.0,40.9 L765.0,45.9 L765.0,48.0 L770.0,50.7 L770.0,53.4 L775.0,55.2 L780.0,57.7 L780.0,62.0 L785.0,64.0 L785.0,66.3 L790.0,67.9 L790.0,69.6 L795.0,72.9 L800.0,76.0 L800.0,79.0 L805.0,80.7 L805.0,84.1 L810.0,87.4 L810.0,89.1 L815.0,90.1 L820.0,92.0 L820.0,96.7 L825.0,101.1 L825.0,104.0 L830.0,106.8 L830.0,109.9 L835.0,110.7 L840.0,111.4 L840.0,112.4 L845.0,114.4 L845.0,115.1 L850.0,116.8 L850.0,118.1 L855.0,119.1 L860.0,122.4 L860.0,123.2 L865.0,124.4 L865.0,123.2 L870.0,121.2 L870.0,120.8 L875.0,120.5 L880.0,119.7 L880.0,120.3 L885.0,121.2 L885.0,120.3 L890.0,122.5 L890.0,123.5 L895.0,125.4 L900.0,127.2 L900.0,128.3 L905.0,133.3 L905.0,138.0 L910.0,142.8 L910.0,146.1 L915.0,148.7 L920.0,151.0 " fill="none" stroke="#b49a66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="50" y="208" font-size="11" fill="#6f765e" font-family="sans-serif">0km</text><text x="890" y="208" font-size="11" fill="#6f765e" font-family="sans-serif" text-anchor="end">1.7km</text><text x="42" y="22" font-size="11" fill="#6f765e" font-family="sans-serif" text-anchor="end">1111m</text><text x="42" y="190" font-size="11" fill="#6f765e" font-family="sans-serif" text-anchor="end">44m</text>
+</svg>
+  </div>
+</div>
+
+<!-- 路线复盘 -->
+<div class="companion-section">
+  <p class="companion-text">硬核、狼狈但开心。适合被做成一枚可以长期留着的路线纪念物。</p>
+</div>
+
+<!-- 页脚 -->
+<div class="footer">
+  <p class="footer-hashtags">
+    #雁荡山 #雁荡三尖 #徒步<br>
+    #蜗牛山野 #户外记录
+  </p>
+  <div class="footer-divider"></div>
+  <p class="footer-logo">蜗牛山野 · 山野路迹 · 记录每一步</p>
+</div>
+
+</body>
+</html>
